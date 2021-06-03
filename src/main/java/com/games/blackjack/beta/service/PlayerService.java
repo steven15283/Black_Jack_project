@@ -8,17 +8,19 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Service //annotation to tell framework that this is the service class
 public class PlayerService {
-    @Autowired
+
+    @Autowired //injects the object into this class. like initializing it see below
     private PlayerDao playerDao;
 
+    //can also be initialized like this
+//    PlayerService(PlayerDao playerDao){
+//        this.playerDao = playerDao;
+//    }
+
     public List<Player> listAll() {
-        ArrayList<Player> data = new ArrayList<>();
-        for (Player player : playerDao.findAll()) {
-            data.add(player);
-        }
-        return data;
+        return playerDao.findAll();
     }
 
     public void save(Player player) {
