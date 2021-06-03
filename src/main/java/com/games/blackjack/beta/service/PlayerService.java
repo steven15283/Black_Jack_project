@@ -32,6 +32,7 @@ public class PlayerService {
     }
 
     public void delete(String username) {
-        playerDao.deleteByUsername(username);
+        playerDao.delete(playerDao.findByUsername(username));
+
     }
 }

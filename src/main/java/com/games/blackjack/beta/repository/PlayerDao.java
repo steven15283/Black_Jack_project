@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface PlayerDao extends JpaRepository<Player,String> {
 
     Player findByUsername(String username);
-    void deleteByUsername(String username);
 
 }
 
