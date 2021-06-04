@@ -1,13 +1,18 @@
 package com.games.blackjack.beta.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+@Entity
 public class Card {
+    @Id
+    private String id;
     private String card_name;
     private int face_value;
 
     public Card(){
 
     }
-    public Card(int num){
+    public Card(int num){//
         switch(num){
             case 1:
                 this.card_name ="A";
