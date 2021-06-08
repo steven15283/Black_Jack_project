@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/")
 public class PlayerController {
 
     private final PlayerService service;
@@ -18,12 +18,12 @@ public class PlayerController {
         this.service = service;
     }
 
-    @GetMapping("/players")
+    @GetMapping("/player/players")
     public List<Player> getPlayers() {
         return service.listAll();
     }
 
-    @PostMapping("/newPlayer")
+    @PostMapping("register/newPlayer")
     public void createPlayer(@RequestBody Player player) {
         service.save(player);
     }
