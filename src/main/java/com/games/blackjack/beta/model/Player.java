@@ -3,23 +3,25 @@ package com.games.blackjack.beta.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
+@Table(name = "player")
 public class Player {
     @Id
     private String username;
+    @Column(name = "balance")
     private double balance;
 
+    @Column(name = "hand")
     @OneToMany(targetEntity=Card.class, cascade = {CascadeType.ALL})
     private List<Card> hand;
+    @Column(name = "move")
     private String move;
+    @Column(name = "is_in_game")
     private boolean isInGame;
 
     public Player() {
