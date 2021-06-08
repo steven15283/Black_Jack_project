@@ -1,5 +1,7 @@
 package com.games.blackjack.beta.controller;
 
+import com.games.blackjack.beta.model.Dealer;
+import com.games.blackjack.beta.model.Deck;
 import com.games.blackjack.beta.model.Player;
 import com.games.blackjack.beta.service.BlackJackService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,8 @@ public class BlackJackController {
 
     @PostMapping("/start")
     public void startBlackJackGame(@RequestBody List<Player> players) {
+        Deck deck =  new Deck();
+        Dealer dealer = new Dealer();
         service.joinGame(players);
 
         service.dealCards(players);
