@@ -12,6 +12,7 @@ import java.util.List;
 @Table(name = "player")
 public class Player {
     @Id
+    @Column(name = "username")
     private String username;
     @Column(name = "balance")
     private double balance;
