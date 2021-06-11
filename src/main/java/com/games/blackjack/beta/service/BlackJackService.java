@@ -74,10 +74,6 @@ public class BlackJackService {
             Player foundPlayer = playerDao.findByUsername(player.getUsername());
             Deck deck = deckDao.findAll().get(0);
             Dealer dealer = dealerDao.findAll().get(0);
-            //List<Card> hand = new ArrayList<Card>(foundPlayer.getHand());
-            //Card nextCard = new Card(22);
-            //hand.add(nextCard);
-            //foundPlayer.setHand(hand);
             dealer.deal_card(deck, foundPlayer);//player gets a card
             deckDao.save(deck);
             dealerDao.save(dealer);
@@ -94,11 +90,17 @@ public class BlackJackService {
         log.info(player.getUsername() + " stands.");
     }
 
-    public void isBlackJack(Player player) {
+    public boolean isBlackJack(Player player) {
           if(player.getHand_value() == TWENTY_ONE) {
                 player.setBalance(player.getBalance() + player.getBet()*1.5);
                 playerDao.save(player);
+                return true;
           }
+          else
+          {
+              return false;
+          }
+
     }
 
     public void is21(Player player) {
@@ -123,10 +125,6 @@ public class BlackJackService {
 
     }
 
-    public void dealerHit(Dealer dealer){
-        Deck deck = deckDao.findAll().get(0);
-
-    }
     public void dealerWon(List<Player> players) {
         Dealer dealer = dealerDao.findAll().get(0);
         if(dealer.getHand_value() == TWENTY_ONE) {
@@ -140,7 +138,8 @@ public class BlackJackService {
             );
         }
     }
-    public void dealer_reach_limit(Dealer dealer){
+
+    public void dealer_reach_limit(Dealer dealer) {
         Deck deck = deckDao.findAll().get(0);
         Card card = new Card();
         do{
@@ -150,6 +149,7 @@ public class BlackJackService {
         }while(dealer.getHand_value() < 17);
 
     }
+
     public void checkHands(Player player) {
         Dealer dealer = dealerDao.findAll().get(0);
         if(dealer.getHand_value() < 21) {

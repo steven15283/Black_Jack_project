@@ -24,8 +24,30 @@ public class BlackJackController {
         Deck deck =  new Deck();
         Dealer dealer = new Dealer();
         service.joinGame(players);
-
         service.dealCards(players);
+
+        //goes through each player to hit/stand
+        /*
+        players.forEach(
+                player -> {
+                    if(service.isBlackJack(player)) {
+                        //do nothing b/c player already won
+                    }
+                    else{
+                        do {//keeps looping for player input aka clicking hit button or stand button.
+
+                            if(//player's hit button has been hit) {
+                                service.hit(player);
+                                if(service.isBust(player)) {//player has busted, stop asking if player wants to hit or stand
+                                    break;
+                                }
+                            }
+                        }while(//stand button is not been hit);
+                    }
+                }
+        );
+*/
+
     }
 
     @PostMapping("/hit")
