@@ -24,6 +24,7 @@ public class PlayerService {
     }
 
     public void save(Player player) {
+        player.setBalance(1000);
         playerDao.save(player);
     }
 
@@ -35,4 +36,6 @@ public class PlayerService {
         playerDao.delete(playerDao.findByUsername(username));
 
     }
+
+
 }
