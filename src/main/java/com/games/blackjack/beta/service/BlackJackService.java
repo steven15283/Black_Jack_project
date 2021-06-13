@@ -35,7 +35,9 @@ public class BlackJackService {
             players.forEach(
                     player -> {
                         if(playerDao.findByUsername(player.getUsername()) != null) {
+                            System.out.println(player.getUsername());
                             player.setInGame(true);
+                            player.setRoom(1);
                             playerDao.save(player);
                         }else {
                             log.error(player.getUsername() + " does not exist.");
@@ -103,10 +105,14 @@ public class BlackJackService {
 
     }
 
-    public void is21(Player player) {
+    public boolean is21(Player player) {
         if(player.getHand_value() == TWENTY_ONE) {
             player.setBalance(player.getBalance() + player.getBet());
             playerDao.save(player);
+            return true;
+        }
+        else{
+            return false;
         }
     }
 
@@ -150,9 +156,9 @@ public class BlackJackService {
 
     }
 
-    public void checkHands(Player player) {
+    public void checkHand(Player player) {
         Dealer dealer = dealerDao.findAll().get(0);
-        if(dealer.getHand_value() < 21) {
+        if(dealer.getHand_value() > player.getHand_value()) {
             if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
                 Player foundPlayer = playerDao.findByUsername(player.getUsername());
 
@@ -161,6 +167,13 @@ public class BlackJackService {
                     player.setBalance(player.getBalance() - player.getBet());
                     playerDao.save(foundPlayer);
                 }
+            }
+        }
+        else if(dealer.getHand_value() == player.getHand_value()){
+            if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
+                Player foundPlayer = playerDao.findByUsername(player.getUsername());
+                player.setBalance(player.getBalance());
+                playerDao.save(foundPlayer);
             }
         }
         else {
@@ -172,6 +185,24 @@ public class BlackJackService {
             }
         }
 
+    public boolean dealer_bj_check(Dealer dealer)
+    {
+        if(dealer.getHand_value() == 21)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
+
+    public Dealer getDealer() {
+        Dealer dealer = dealerDao.findAll().get(0);
+        return dealer;
+    }
+}
+
+
 
 

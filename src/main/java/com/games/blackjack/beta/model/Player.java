@@ -10,14 +10,23 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Table(name = "player")
 public class Player {
     @Id
+    @Column(name = "username")
     private String username;
+    @Column(name = "balance")
     private double balance;
     private int hand_value;
+    private int room;
+
+    @Column(name = "hand")
+
     @OneToMany(targetEntity=Card.class, cascade = {CascadeType.ALL})
     private List<Card> hand;
+    @Column(name = "move")
     private String move;
+    @Column(name = "is_in_game")
     private boolean isInGame;
     private double bet;
 
@@ -27,6 +36,7 @@ public class Player {
         this.hand = new ArrayList<Card>();
         this.hand_value = 0;
         this.bet = 0;
+        this.room = 0;
     }
 
     public Player(String username, double balance, List<Card> hand, String move, boolean isInGame) {
@@ -37,6 +47,7 @@ public class Player {
         this.move = move;
         this.isInGame = isInGame;
         this.bet = 0;
+        this.room = 0;
     }
 
     public void get_card(Card card){
