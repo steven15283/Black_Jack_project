@@ -18,9 +18,9 @@ function deck(){
     return cards;
 }
 
-function showCards() {
+function showCards(username) {
     $.ajax({
-        url : 'api/v1/player/ken',
+        url : 'api/v1/player/' + username,
         type : 'GET',
         dataType : 'json',
         success : function(player) {

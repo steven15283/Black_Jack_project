@@ -17,9 +17,9 @@
     <div id="player" class="playerGroup"></div>
 
     <button onclick="getPlayers()">Get Players</button>
-    <button onclick="startGame();showCards();">Start Game</button>
-    <button onclick="callDealerApi()">playerTurn</button>
-    <button onclick="console.log('before hit click:', hitFlag); hit(); showCards(); console.log('after hit click:', hitFlag);">Hit</button>
+    <button onclick="startGame();">Start Game</button>
+    <button onclick="callDealerApi();">playerTurn</button>
+    <button onclick="console.log('before hit click:', hitFlag); hit(); showCards(getCurrentPlayer()); console.log('after hit click:', hitFlag);">Hit</button>
     <button onclick="console.log('before stand click:',standFlag);standEvent(); console.log('after stand click:', standFlag);">Stand</button>
     <button onclick="createTestPlayers()">create Test Players</button>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

@@ -4,6 +4,10 @@ var dealer_global;
 var maxPlayers = 0;
 var curPlayers = 0;
 var player_global = [];
+
+function getCurrentPlayer() {
+    return player_global[curPlayers].username;
+}
 function createPlayer(username) {
       var jsonData =
       {
