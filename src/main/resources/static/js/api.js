@@ -1,10 +1,11 @@
 var hitFlag = false;
 var standFlag = false;
+var dealer_global;
 
-function createPlayer() {
+function createPlayer(username) {
       var jsonData =
       {
-        "username" : "steven",
+        "username" : username,
       }
 
       saveData = $.ajax({
@@ -16,6 +17,12 @@ function createPlayer() {
             success: function(resultData) { console.log("Save Complete") }
       });
 
+}
+
+function createTestPlayers() {
+    createPlayer("steven")
+    createPlayer("mike")
+    createPlayer("ken")
 }
 
 function getPlayers() {
@@ -31,27 +38,40 @@ function getPlayers() {
     });
 }
 
-function getDealer() {
+function callDealerApi() {
     $.ajax({
         url : 'api/v1/blackjack/getDealer',
         type : 'GET',
         dataType : 'json',
         success : function(data) {
-            console.log(data)
+            setDealer(data)
+            getPlayersInRoom()
+
         }
     });
 
 
 }
 
+function setDealer(dealer) {
+    dealer_global = dealer;
+}
+
+function getDealer() {
+    return dealer_global;
+}
+
 function startGame() {
       var jsonData = [
           {
-                "username" : "s"
+                "username" : "steven"
           },
           {
-                "username" : "m"
-          }
+                "username" : "mike"
+          },
+          {
+                "username" : "ken"
+          },
       ]
 
 
@@ -65,38 +85,48 @@ function startGame() {
       });
 }
 
-function playerTurn(){
-    players = $.ajax({
+function playerTurn(players) {
+        console.log(players.length)
+
+    for (var i = 0; i < players.length; i++) {
+        console.log(players[i])
+    }
+        var dealer_test = getDealer()
+        console.log(dealer_test);
+}
+
+function getPlayersInRoom(){
+     $.ajax({
             url : 'api/v1/player/players/room/1',
             type : 'GET',
             dataType : 'json',
             success : function(data) {
-                console.log(data)
+                playerTurn(data)
             }
     });
-        console.log("players");
 
-    var dealer = getDealer();
-    console.log(dealer);
-        for (var i =0; i < players.length; i++)
-        {
-            console.log(players[i]);
-            do
-            {
-                if(hitFlag){
-                    console.log("hitflag");
-                    hit(players[i])
-                    if(isBust(players[i]))
-                    {
-                        console.log("player busts");
-                        break;
-                    }
-                    hitFlag = false;
-                }
-            }while(standFlag == false);
-            standFlag = false;
-            console.log("next player");
-        }
+
+//    var dealer = getDealer();
+//    console.log(dealer);
+//        for (var i =0; i < players.length; i++)
+//        {
+//            console.log(players[i]);
+//            do
+//            {
+//                if(hitFlag){
+//                    console.log("hitflag");
+//                    hit(players[i])
+//                    if(isBust(players[i]))
+//                    {
+//                        console.log("player busts");
+//                        break;
+//                    }
+//                    hitFlag = false;
+//                }
+//            }while(standFlag == false);
+//            standFlag = false;
+//            console.log("next player");
+//        }
         /*
         dealer_reach_limit(dealer);
 
