@@ -1,7 +1,9 @@
 var hitFlag = false;
 var standFlag = false;
 var dealer_global;
-
+var maxPlayers = 0;
+var curPlayers = 0;
+var player_global = [];
 function createPlayer(username) {
       var jsonData =
       {
@@ -85,15 +87,39 @@ function startGame() {
       });
 }
 
-function playerTurn(players) {
-        console.log(players.length)
-
-    for (var i = 0; i < players.length; i++) {
-        console.log(players[i])
-    }
-        var dealer_test = getDealer()
-        console.log(dealer_test);
+function playerTurn(players)
+{
+    player_global = players
+    maxPlayers = players.length
+    var x =0;
+    console.log(players[curPlayers])
+//
+////    while(x < players.length)
+////    {
+////        await sleep(2000);
+//        if(hitFlag == true)
+//        {
+//            console.log("hitflag")
+//            hit(players[x])
+////            if(isBust(players[x]))
+////            {
+////                console.log("player busts")
+////                break;
+////            }
+//            hitFlag = false
+//        }
+//
+//        if(standFlag == true){
+//            x = x + 1
+//            standFlag = false;
+//            console.log("next player")
+//        }
+//    }
+//    var dealer_test = getDealer()
+//    console.log(dealer_test)
 }
+
+
 
 function getPlayersInRoom(){
      $.ajax({
@@ -150,15 +176,16 @@ function getPlayersInRoom(){
         */
 }
 
-function hit(player){
-
+function hit(){
+        console.log(player_global[curPlayers].username)
        var data = {
-             "username" : player.getUsername()
+             "username" : player_global[curPlayers].username
        }
        $.ajax({
                url : 'api/v1/blackjack/hit',
                type : 'POST',
                data: JSON.stringify(data),
+               contentType: "application/json",
                dataType : 'json',
                success : function(data) {
                    console.log(data)
@@ -167,16 +194,13 @@ function hit(player){
 }
 
 function standEvent(){
+        curPlayers = curPlayers + 1;
        standFlag = true;
-}
-
-function hitEvent(){
-       hitFlag = true;
 }
 
 function isBust(player){
        var data = {
-                    "username" : player.getUsername()
+               "username" : player_global[curPlayers].username
           }
           $.ajax({
                   url : 'api/v1/blackjack/isBust',
@@ -264,4 +288,13 @@ function dealer_bj_check(dealer){
                   }
               });
 }
+
+//function sleep(ms) {
+//  return new Promise(resolve => setTimeout(resolve, ms));
+//}
+//
+//async function demo() {
+//  console.log('Taking a break...');
+//  await sleep(20000);
+//  console.log('20 seconds later, showing sleep in a loop...');
 
