@@ -163,9 +163,8 @@ function hit(){
                contentType: "application/json",
                dataType : 'json',
                success : function(data) {
-               console.log("hit function:", player_global[curPlayers].username))
-
-                   isBust()
+               console.log("hit function:", player_global[curPlayers].username)
+                   isBust(data)
                }
            });
 }
@@ -175,10 +174,10 @@ function standEvent(){
        standFlag = true;
 }
 
-function isBust(){
-       console.log("isbustcheck: ", player_global[curPlayers].username)
+function isBust(player){
+       console.log("isbustcheck: ", player.username)
        var data = {
-               "username" : player_global[curPlayers].username
+               "username" : player.username
           }
           $.ajax({
                   url : 'api/v1/blackjack/isBust',
