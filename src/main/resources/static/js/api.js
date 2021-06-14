@@ -91,32 +91,7 @@ function playerTurn(players)
 {
     player_global = players
     maxPlayers = players.length
-    var x =0;
-    console.log(players[curPlayers])
-//
-////    while(x < players.length)
-////    {
-////        await sleep(2000);
-//        if(hitFlag == true)
-//        {
-//            console.log("hitflag")
-//            hit(players[x])
-////            if(isBust(players[x]))
-////            {
-////                console.log("player busts")
-////                break;
-////            }
-//            hitFlag = false
-//        }
-//
-//        if(standFlag == true){
-//            x = x + 1
-//            standFlag = false;
-//            console.log("next player")
-//        }
-//    }
-//    var dealer_test = getDealer()
-//    console.log(dealer_test)
+    console.log("current player:", player_global[curPlayers].username)
 }
 
 
@@ -188,17 +163,20 @@ function hit(){
                contentType: "application/json",
                dataType : 'json',
                success : function(data) {
-                   console.log(data)
+               console.log("hit function:", player_global[curPlayers].username))
+
+                   isBust()
                }
            });
 }
 
 function standEvent(){
-        curPlayers = curPlayers + 1;
+       curPlayers = curPlayers + 1;
        standFlag = true;
 }
 
-function isBust(player){
+function isBust(){
+       console.log("isbustcheck: ", player_global[curPlayers].username)
        var data = {
                "username" : player_global[curPlayers].username
           }
@@ -208,7 +186,12 @@ function isBust(player){
                   data: JSON.stringify(data),
                   dataType : 'json',
                   success : function(data) {
-                      console.log(data)
+                      if(data)
+                      {
+                        console.log("player bust")
+                        curPlayers += 1
+                      }
+
                   }
               });
 }

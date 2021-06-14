@@ -24,13 +24,20 @@ public class Dealer {
 
 
     public void get_card(Card card){
-        System.out.println("b4 adding to dealer hand");
-        System.out.println("card:" + card.toString());
         hand.add(card);
         hand_value += card.get_face_value();
-        System.out.println("hand:" + hand.toString());
+        if(hand_value > 21)
+        {
+            for(int i =0; i < hand.size();i++)
+            {
+                if(hand.get(i).get_face_value() == 11)
+                {
+                    hand.get(i).set_face_value(1);
+                    break;
+                }
+            }
+        }
 
-        System.out.println("after adding to dealer hand");
     }
 
     public void hide_card(){
