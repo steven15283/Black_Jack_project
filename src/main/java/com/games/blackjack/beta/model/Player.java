@@ -64,6 +64,13 @@ public class Player {
                     break;
                 }
             }
+            setHand_value(0);
+            for(int i =0; i < hand.size();i++)
+            {
+
+                hand_value += hand.get(i).get_face_value();
+
+            }
         }
     }
 

@@ -79,10 +79,6 @@ public class BlackJackService {
         }
     }
 
-    public void stand(Player player) {
-
-        log.info(player.getUsername() + " stands.");
-    }
 
     public boolean isBlackJack(Player player) {
           if(player.getHand_value() == TWENTY_ONE) {
@@ -109,12 +105,13 @@ public class BlackJackService {
     }
 
     public boolean isBust(Player player) {
-
-        if(player.getHand_value() > 21) {
-            log.info(player.getUsername() + " busted with a score of " + player.getHand_value());
-            player.setBalance(player.getBalance() - player.getBet());
-            player.setInGame(false);
-            playerDao.save(player);
+        System.out.println("isbust function in blackjackservice");
+        Player foundPlayer = playerDao.findByUsername(player.getUsername());
+        if(foundPlayer.getHand_value() > 21) {
+            log.info(foundPlayer.getUsername() + " busted with a score of " + foundPlayer.getHand_value());
+            foundPlayer.setBalance(foundPlayer.getBalance() - foundPlayer.getBet());
+            foundPlayer.setInGame(false);
+            playerDao.save(foundPlayer);
             return true;
         }
         else{

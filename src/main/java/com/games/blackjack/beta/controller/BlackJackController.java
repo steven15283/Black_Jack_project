@@ -33,11 +33,6 @@ public class BlackJackController {
         return service.isBust(player);
     }
 
-    @PostMapping("/stand")
-    public void stand(@RequestBody Player player) {
-        service.stand(player);
-    }
-
     @PostMapping("/bj")
     public boolean bj(@RequestBody Player player) { return service.isBlackJack(player); }
 
