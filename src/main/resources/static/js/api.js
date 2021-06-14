@@ -97,6 +97,8 @@ function playerTurn(players)
     maxPlayers = players.length
     var x =0;
     console.log(players[curPlayers])
+    showCards(players[curPlayers].username);
+
 //
 ////    while(x < players.length)
 ////    {
@@ -192,13 +194,16 @@ function hit(){
                contentType: "application/json",
                dataType : 'json',
                success : function(data) {
-                   console.log(data)
+                   showCards(getCurrentPlayer());
                }
            });
 }
 
 function standEvent(){
         curPlayers = curPlayers + 1;
+        if(curPlayers < maxPlayers) {
+            showCards(getCurrentPlayer());
+        }
        standFlag = true;
 }
 
@@ -218,6 +223,7 @@ function isBust(player){
 }
 
 function stand(player){
+
        var data = {
                     "username" : player.getUsername()
           }

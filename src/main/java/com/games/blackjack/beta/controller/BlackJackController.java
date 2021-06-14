@@ -1,9 +1,7 @@
 package com.games.blackjack.beta.controller;
 
 import com.games.blackjack.beta.model.Dealer;
-import com.games.blackjack.beta.model.Deck;
 import com.games.blackjack.beta.model.Player;
-import com.games.blackjack.beta.repository.DealerDao;
 import com.games.blackjack.beta.service.BlackJackService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +22,8 @@ public class BlackJackController {
     }
 
     @PostMapping("/hit")
-    public void hit(@RequestBody Player player) {
-        service.hit(player);
+    public boolean hit(@RequestBody Player player) {
+        return service.hit(player);
     }
 
     @PostMapping("/isBust")
