@@ -45,6 +45,10 @@ public class Dealer {
         player.get_card(deck.draw());
     }
 
+    public void deal_card(Deck deck, Dealer dealer){
+        dealer.get_card(deck.draw());
+    }
+
     public void setHand_value(int value){
         hand_value = value;
     }

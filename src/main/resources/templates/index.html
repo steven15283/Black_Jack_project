@@ -4,25 +4,36 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link href="css/cards.css" rel="stylesheet" />
+    <link href="css/button.css" rel="stylesheet" />
 </head>
 <body>
 
-    <h1>STEVENNNNN GUOOOO</h1>
-    <h1>STEVENNNNN GUOOOO</h1>
+    <h1 style="text-align:center">STEVENNNNN GUOOOO</h1>
+    <h1 style="text-align:center">STEVENNNNN GUOOOO</h1>
     <br>
 
-    <h1>Room <span id="room"></span></h1>
+    <h1 style="text-align:center">Room <span id="room"></span></h1>
 <!--    <h1>Player:  <span id="player"></span></h1>-->
+
+    <div id="dealer" class="playerGroup"></div>
 
     <div id="player" class="playerGroup"></div>
 
-    <button onclick="getPlayers()">Get Players</button>
-    <button onclick="startGame();">Start Game</button>
-    <button onclick="callDealerApi();">playerTurn</button>
 
-    <button onclick="console.log('before hit click:', hitFlag); hit(); console.log('after hit click:', hitFlag);">Hit</button>
-    <button onclick="console.log('before stand click:',standFlag);standEvent(); console.log('after stand click:', standFlag);">Stand</button>
-    <button onclick="createTestPlayers()">create Test Players</button>
+
+    <div style="text-align:center">
+        <button onclick="getPlayers();">Get Players</button>
+
+        <button onclick="startGame();">Start Game</button>
+        <button onclick="callDealerApi();">playerTurn</button>
+        <button onclick="createTestPlayers()">create Test Players</button>
+    </div>
+    <br>
+    <div id="gameButtons" style="text-align:center; display:none;">
+        <button class="button-slide" onclick="hit()"><span class='text'>Hit</span><span class="icon"></span></button>
+        <button class="button-slide" onclick="standEvent()"><span class='text'>Stand</span><span class="icon"></span></button>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="js/cards.js"></script>
     <script src="js/api.js"></script>

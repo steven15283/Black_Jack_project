@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -70,7 +71,7 @@ public class BlackJackService {
         dealerDao.save(dealer);
     }
 
-    public boolean hit(Player player) {
+    public int hit(Player player) {
         if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
             Player foundPlayer = playerDao.findByUsername(player.getUsername());
             Deck deck = deckDao.findAll().get(0);
@@ -82,16 +83,55 @@ public class BlackJackService {
             if (isBust(foundPlayer)) {
                 foundPlayer.setInGame(false);
                 playerDao.save(foundPlayer);
+                return 1; //Player Bust
             }
-            return true;
+            else if (is21(foundPlayer)) {
+                foundPlayer.setInGame(false);
+                playerDao.save(foundPlayer);
+                return 2; //Player Has 21
+            }
+            return 3; //Player Hit
         }
-        return false;
+        return 4; //Player Not Found
     }
 
-    public void stand(Player player) {
-
-        log.info(player.getUsername() + " stands.");
+    public List<Integer> dealerHit() {
+        Dealer dealer = dealerDao.findAll().get(0);
+        Deck deck = deckDao.findAll().get(0);
+        while(dealer.getHand_value() < 17){
+            dealer.deal_card(deck, dealer);
+            dealerDao.save(dealer);
+            deckDao.save(deck);
+        }
+        return checkHands();
     }
+
+    public List<Integer> checkHands() {
+        List<Integer> winners = new ArrayList<>();
+        List<Player> players = playerDao.findAll();
+        Dealer dealer = dealerDao.findAll().get(0);
+        for(int i = 0; i < players.size(); i++) {
+            if (playerDao.findByUsername(players.get(i).getUsername()) != null) {
+                if (players.get(i).getHand_value() < dealer.getHand_value() && dealer.getHand_value() <= 21) {
+                    players.get(i).setBalance(players.get(i).getBalance() - players.get(i).getBet());
+                    playerDao.save(players.get(i));
+                    winners.add(players.size());
+                } else if (players.get(i).getHand_value() > dealer.getHand_value() && players.get(i).getHand_value() <= 21) {
+                    players.get(i).setBalance(players.get(i).getBalance() + players.get(i).getBet());
+                    playerDao.save(players.get(i));
+                    winners.add(i);
+                } else if(dealer.getHand_value() > 21) {
+                    if(players.get(i).getHand_value() <= 21) {
+                        players.get(i).setBalance(players.get(i).getBalance() + players.get(i).getBet());
+                        playerDao.save(players.get(i));
+                        winners.add(i);
+                    }
+                }
+            }
+        }
+        return winners;
+    }
+
 
     public boolean isBlackJack(Player player) {
           if(player.getHand_value() == TWENTY_ONE) {
@@ -108,8 +148,8 @@ public class BlackJackService {
 
     public boolean is21(Player player) {
         if(player.getHand_value() == TWENTY_ONE) {
-            player.setBalance(player.getBalance() + player.getBet());
-            playerDao.save(player);
+//            player.setBalance(player.getBalance() + player.getBet());
+//            playerDao.save(player);
             return true;
         }
         else{

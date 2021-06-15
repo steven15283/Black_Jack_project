@@ -18,14 +18,12 @@ function deck(){
     return cards;
 }
 
-function showCards(username) {
+function showCards(username, busted) {
     $.ajax({
         url : 'api/v1/player/' + username,
         type : 'GET',
         dataType : 'json',
         success : function(player) {
-            console.log(player)
-
             document.getElementById('player').innerHTML = ""
 
             var div_player = document.createElement('div');
@@ -45,7 +43,11 @@ function showCards(username) {
             div_player.appendChild(div_points);
             document.getElementById('player').appendChild(div_player);
 
-            document.getElementById('points_' + player.username).innerHTML = player.hand_value
+            if(busted) {
+                document.getElementById('points_' + player.username).innerHTML = "BUST"
+            } else {
+                document.getElementById('points_' + player.username).innerHTML = player.hand_value
+            }
 
             for(var i=0; i < player.hand.length; i++){
                 var hand = document.getElementById('hand_' + player.username);

@@ -22,27 +22,17 @@ public class BlackJackController {
     }
 
     @PostMapping("/hit")
-    public boolean hit(@RequestBody Player player) {
+    public int hit(@RequestBody Player player) {
         return service.hit(player);
     }
 
-    @PostMapping("/isBust")
-    public boolean isBust(@RequestBody Player player) {
-        return service.isBust(player);
-    }
-
-    @PostMapping("/stand")
-    public void stand(@RequestBody Player player) {
-        service.stand(player);
+    @PostMapping("/dealerHit")
+    public List<Integer> dealerHit() {
+        return service.dealerHit();
     }
 
     @PostMapping("/bj")
     public boolean bj(@RequestBody Player player) { return service.isBlackJack(player); }
-
-    @PostMapping("/is21")
-    public void is21(@RequestBody Player player) {
-        service.is21(player);
-    }
 
     @PostMapping("/dealerWon")
     public void dealerWon(@RequestBody List<Player> players) {
