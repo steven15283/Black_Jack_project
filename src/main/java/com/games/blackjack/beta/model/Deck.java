@@ -22,7 +22,7 @@ public class Deck {
         for (int i = 0; i < 8; i++) {
             for (int j = 1; j <= 13; j++) {
                 Card card = new Card(j);
-                log.info(card.toString());
+                //log.info(card.toString());
                 pile.add(card);
             }
         }

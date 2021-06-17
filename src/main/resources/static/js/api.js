@@ -94,6 +94,10 @@ function playerTurn(players)
     player_global = players
     maxPlayers = players.length
     console.log("current player:", player_global[curPlayers].username)
+    var x =0;
+    dealer_bj_check(dealer_global)
+    console.log(players[curPlayers])
+    showCards(players[curPlayers].username);
 }
 
 
@@ -122,6 +126,8 @@ function hit(){
                dataType : 'json',
                success : function(data) {
                console.log("hit function:", player_global[curPlayers].username)
+               showCards(getCurrentPlayer());
+
                }
 
            });
@@ -130,7 +136,21 @@ function hit(){
 }
 
 function standEvent(){
+
        curPlayers = curPlayers + 1;
+
+        if(curPlayers < maxPlayers) {
+            showCards(getCurrentPlayer());
+        }
+        if(curPlayers == maxPlayers){
+            dealer_reach_limit(dealer_global)
+            for(var i = 0; i< maxPlayers;i++){
+                checkHand(player_global[curPlayers].username)
+            }
+              dealer_reach_limit()
+        }
+       standFlag = true;
+
 }
 
 function isBust(){
@@ -145,16 +165,15 @@ function isBust(){
                   contentType: "application/json",
                   dataType : 'json',
                   success : function(data) {
-                      console.log("player bust check")
+                      console.log("player bust check-functin success")
                       console.log(data)
                       if(data)
                       {
                         console.log("player bust")
                         curPlayers += 1
                       }
-
-                  }
-              });
+                 }
+          });
 }
 
 function bj(player){
@@ -183,14 +202,17 @@ function dealerWon(players){
            });
 }
 
-function dealer_reach_limit(dealer){
-      $.ajax({
+function dealer_reach_limit(){
+      var data = {
+                    dealer_global
+           }
+           $.ajax({
               url : 'api/v1/blackjack/dealerRL',
               type : 'POST',
-              data: JSON.stringify(dealer),
+              data: JSON.stringify(data),
               dataType : 'json',
-              success : function(dealer) {
-                  console.log(dealer)
+              success : function(data) {
+                  console.log(data)
               }
           });
 }
@@ -206,14 +228,17 @@ function checkHand(player){
            });
 }
 
-function dealer_bj_check(dealer){
+function dealer_bj_check(){
+        var data = {
+                       dealer_global
+                   }
           $.ajax({
                   url : 'api/v1/blackjack/dealerBJCheck',
                   type : 'POST',
-                  data: JSON.stringify(dealer),
+                  data: JSON.stringify(data),
                   dataType : 'json',
-                  success : function(dealer) {
-                      console.log(dealer)
+                  success : function(data) {
+                      console.log(data)
                   }
               });
 }

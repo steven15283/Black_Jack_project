@@ -67,7 +67,7 @@ public class BlackJackService {
         dealerDao.save(dealer);
     }
 
-    public void hit(Player player) {
+    public boolean hit(Player player) {
         if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
             Player foundPlayer = playerDao.findByUsername(player.getUsername());
             Deck deck = deckDao.findAll().get(0);
@@ -76,7 +76,9 @@ public class BlackJackService {
             deckDao.save(deck);
             dealerDao.save(dealer);
             playerDao.save(foundPlayer);
+            return true;
         }
+        return false;
     }
 
 
