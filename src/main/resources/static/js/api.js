@@ -1,6 +1,7 @@
 var maxPlayers = 0;
 var curPlayers = 0;
 var player_global = [];
+var room_global = 0;
 
 function createTestPlayers() {
     createPlayer("steven")
@@ -34,6 +35,26 @@ function getDealer(dealersTurn) {
                 showDealerCards(dealersTurn, data);
             }
     });
+}
+
+function getWinners(winners){
+    document.getElementById('winners').innerHTML = ""
+
+    var div_winners = document.createElement('div');
+    for(var i = 0; i < winners.length; i++) {
+        var div_winnersid = document.createElement('div');
+
+        div_winners.className = 'player';
+        if(winners == maxPlayers) {
+//            div_winnersid.innerHTML = player_global[winners] + " won against Dealer";
+        } else {
+            div_winnersid.innerHTML = player_global[winners].username + " won against Dealer";
+        }
+
+        div_winners.appendChild(div_winnersid);
+        document.getElementById('winners').appendChild(div_winners);
+    }
+
 }
 
 function showDealerCards(dealersTurn, dealer) {
@@ -136,6 +157,8 @@ function getPlayersInRoom(room){
             dataType : 'json',
             success : function(data) {
                 playerTurn(data)
+                showCards(room, player_global[curPlayers], false);
+                room_global = room
             }
     });
 }
@@ -144,7 +167,6 @@ function playerTurn(players) {
     player_global = players
     maxPlayers = players.length
     getDealer(false);
-    showCards(players[curPlayers].username, false);
 }
 
 function hit(){
@@ -163,6 +185,7 @@ function hit(){
                         console.log("Winners are Dealer")
                     }
                   }
+                  getWinners(data)
               }
        });
     }
@@ -178,12 +201,12 @@ function hit(){
                dataType : 'json',
                success : function(data) {
                    if(data == 1) {
-                      showCards(getCurrentPlayer(), true);
+                      showCards(room_global, player_global[curPlayers], true);
                       setTimeout(function () {
                           standEvent()
                       }, 2000);
                    } else {
-                      showCards(getCurrentPlayer(), false);
+                      showCards(room_global, player_global[curPlayers], false);
                    }
                }
         });
@@ -193,7 +216,7 @@ function hit(){
 function standEvent(){
     curPlayers = curPlayers + 1;
     if(curPlayers < maxPlayers) {
-        showCards(getCurrentPlayer(), false);
+        showCards(room_global, player_global[curPlayers], false);
     }
     else {
        getDealer(true);
