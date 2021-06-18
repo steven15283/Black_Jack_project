@@ -1,3 +1,5 @@
+var busted_players = []
+
 function card(value, name, suit){
   this.value = value;
   this.name = name;
@@ -18,44 +20,60 @@ function deck(){
     return cards;
 }
 
-function showCards(username) {
-    $.ajax({
-        url : 'api/v1/player/' + username,
+function showCards(room, activePlayer, busted) {
+     $.ajax({
+        url : 'api/v1/player/players/room/' + room,
         type : 'GET',
         dataType : 'json',
-        success : function(player) {
-            console.log(player)
-
+        success : function(players) {
             document.getElementById('player').innerHTML = ""
+            for(var i=0; i < players.length; i++) {
+                var div_player = document.createElement('div');
+                var div_playerid = document.createElement('div');
+                var div_hand = document.createElement('div');
+                var div_points = document.createElement('div');
 
-            var div_player = document.createElement('div');
-            var div_playerid = document.createElement('div');
-            var div_hand = document.createElement('div');
-            var div_points = document.createElement('div');
+                div_points.className = 'points';
+                div_points.id = 'points_' + players[i].username;
+                div_player.id = 'player_' + players[i].username;
+                div_player.className = 'player';
+                div_hand.id = 'hand_' + players[i].username;
 
-            div_points.className = 'points';
-            div_points.id = 'points_' + player.username;
-//            div_player.id = 'player_' + player.username;
-            div_player.className = 'player';
-            div_hand.id = 'hand_' + player.username;
+                div_playerid.innerHTML = players[i].username;
+                div_player.appendChild(div_playerid);
+                div_player.appendChild(div_hand);
+                div_player.appendChild(div_points);
 
-            div_playerid.innerHTML = player.username;
-            div_player.appendChild(div_playerid);
-            div_player.appendChild(div_hand);
-            div_player.appendChild(div_points);
-            document.getElementById('player').appendChild(div_player);
+                document.getElementById('player').appendChild(div_player);
 
-            document.getElementById('points_' + player.username).innerHTML = player.hand_value
+                console.log("activePlayer.username ", activePlayer.username)
+                console.log("players[i].username ", players[i].username)
+                document.getElementById('player_' + players[i].username).classList.remove('active');
+                if(players[i].username == activePlayer.username) {
+                    document.getElementById('player_' + activePlayer.username).classList.add('active');
+                }
 
-            for(var i=0; i < player.hand.length; i++){
-                var hand = document.getElementById('hand_' + player.username);
+                document.getElementById('points_' + players[i].username).innerHTML = players[i].hand_value
 
-                div = document.createElement('div');
-                div.innerHTML = player.hand[i]._card_name;
-                div.className = 'card';
+                for(var j=0; j < players[i].hand.length; j++){
+                    var icon = '';
+                    icon='&hearts;';
 
-                hand.appendChild(div);
-           }
+                    var hand = document.getElementById('hand_' + players[i].username);
+
+                    div = document.createElement('div');
+                    div.innerHTML = players[i].hand[j]._card_name + '<br/><br/>' + icon;
+                    div.className = 'card';
+
+                    hand.appendChild(div);
+               }
+            }
+            if(busted) {
+                busted_players.push(activePlayer.username)
+            }
+            for(var k=0; k < busted_players.length; k++) {
+                document.getElementById('points_' + busted_players[k]).innerHTML = "BUST"
+            }
         }
     });
 }

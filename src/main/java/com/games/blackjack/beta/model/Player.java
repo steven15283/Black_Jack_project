@@ -18,7 +18,7 @@ public class Player {
     @Column(name = "balance")
     private double balance;
     private int hand_value;
-    private int room;
+    private String room;
 
     @Column(name = "hand")
 
@@ -36,7 +36,6 @@ public class Player {
         this.hand = new ArrayList<Card>();
         this.hand_value = 0;
         this.bet = 0;
-        this.room = 0;
     }
 
     public Player(String username, double balance, List<Card> hand, String move, boolean isInGame) {
@@ -47,7 +46,6 @@ public class Player {
         this.move = move;
         this.isInGame = isInGame;
         this.bet = 0;
-        this.room = 0;
     }
 
     public void get_card(Card card){

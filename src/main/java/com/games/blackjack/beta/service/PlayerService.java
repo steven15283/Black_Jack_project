@@ -5,7 +5,6 @@ import com.games.blackjack.beta.repository.PlayerDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service //annotation to tell framework that this is the service class

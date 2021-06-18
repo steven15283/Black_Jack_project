@@ -11,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,8 +36,9 @@ public class BlackJackService {
             players.forEach(
                     player -> {
                         if(playerDao.findByUsername(player.getUsername()) != null) {
+                            System.out.println(player.getUsername());
                             player.setInGame(true);
-                            player.setRoom(1);
+                            player.setRoom("1");
                             playerDao.save(player);
                         }else {
                             log.error(player.getUsername() + " does not exist.");
@@ -51,9 +54,11 @@ public class BlackJackService {
         for(int i =0; i < 2;i++)
         {
             dealer.get_card(deck.draw());//dealer gets a card
+            System.out.println("dealer get card");
             dealer.hide_card();//takes face value of only the first card to simulate that the second card is face down
             players.forEach(
                     player -> {
+                        System.out.println("dealer get card");
                         if(playerDao.findByUsername(player.getUsername()) != null) {
                             player.setBet(100);
                             dealer.deal_card(deck, player);//player gets a card
@@ -67,7 +72,7 @@ public class BlackJackService {
         dealerDao.save(dealer);
     }
 
-    public boolean hit(Player player) {
+    public int hit(Player player) {
         if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
             Player foundPlayer = playerDao.findByUsername(player.getUsername());
             Deck deck = deckDao.findAll().get(0);
@@ -76,29 +81,76 @@ public class BlackJackService {
             deckDao.save(deck);
             dealerDao.save(dealer);
             playerDao.save(foundPlayer);
-            return true;
+            if (isBust(foundPlayer)) {
+                foundPlayer.setInGame(false);
+                playerDao.save(foundPlayer);
+                return 1; //Player Bust
+            }
+            else if (is21(foundPlayer)) {
+                foundPlayer.setInGame(false);
+                playerDao.save(foundPlayer);
+                return 2; //Player Has 21
+            }
+            return 3; //Player Hit
         }
-        return false;
+        return 4; //Player Not Found
+    }
+
+    public List<Integer> dealerHit() {
+        Dealer dealer = dealerDao.findAll().get(0);
+        Deck deck = deckDao.findAll().get(0);
+        while(dealer.getHand_value() < 17){
+            dealer.deal_card(deck, dealer);
+            dealerDao.save(dealer);
+            deckDao.save(deck);
+        }
+        return checkHands();
+    }
+
+    public List<Integer> checkHands() {
+        List<Integer> winners = new ArrayList<>();
+        List<Player> players = playerDao.findAll();
+        Dealer dealer = dealerDao.findAll().get(0);
+        for(int i = 0; i < players.size(); i++) {
+            if (playerDao.findByUsername(players.get(i).getUsername()) != null) {
+                if (players.get(i).getHand_value() < dealer.getHand_value() && dealer.getHand_value() <= 21) {
+                    players.get(i).setBalance(players.get(i).getBalance() - players.get(i).getBet());
+                    playerDao.save(players.get(i));
+                    winners.add(players.size());
+                } else if (players.get(i).getHand_value() > dealer.getHand_value() && players.get(i).getHand_value() <= 21) {
+                    players.get(i).setBalance(players.get(i).getBalance() + players.get(i).getBet());
+                    playerDao.save(players.get(i));
+                    winners.add(i);
+                } else if(dealer.getHand_value() > 21) {
+                    if(players.get(i).getHand_value() <= 21) {
+                        players.get(i).setBalance(players.get(i).getBalance() + players.get(i).getBet());
+                        playerDao.save(players.get(i));
+                        winners.add(i);
+                    }
+                }
+            }
+        }
+        return winners;
     }
 
 
     public boolean isBlackJack(Player player) {
-          if(player.getHand_value() == TWENTY_ONE) {
-                player.setBalance(player.getBalance() + player.getBet()*1.5);
-                playerDao.save(player);
-                return true;
-          }
-          else
-          {
-              return false;
-          }
+        if(player.getHand_value() == TWENTY_ONE) {
+            player.setBalance(player.getBalance() + player.getBet()*1.5);
+            playerDao.save(player);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
 
     }
 
     public boolean is21(Player player) {
         if(player.getHand_value() == TWENTY_ONE) {
-            player.setBalance(player.getBalance() + player.getBet());
-            playerDao.save(player);
+//            player.setBalance(player.getBalance() + player.getBet());
+//            playerDao.save(player);
             return true;
         }
         else{
@@ -107,13 +159,11 @@ public class BlackJackService {
     }
 
     public boolean isBust(Player player) {
-        System.out.println("isbust function in blackjackservice");
-        Player foundPlayer = playerDao.findByUsername(player.getUsername());
-        if(foundPlayer.getHand_value() > 21) {
-            log.info(foundPlayer.getUsername() + " busted with a score of " + foundPlayer.getHand_value());
-            foundPlayer.setBalance(foundPlayer.getBalance() - foundPlayer.getBet());
-            foundPlayer.setInGame(false);
-            playerDao.save(foundPlayer);
+
+        if(player.getHand_value() > TWENTY_ONE) {
+            log.info(player.getUsername() + " busted with a score of " + player.getHand_value());
+            player.setBalance(player.getBalance() - player.getBet());
+            playerDao.save(player);
             return true;
         }
         else{
@@ -164,18 +214,17 @@ public class BlackJackService {
         else if(dealer.getHand_value() == player.getHand_value()){
             if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
                 Player foundPlayer = playerDao.findByUsername(player.getUsername());
-                player.setBalance(player.getBalance());
                 playerDao.save(foundPlayer);
             }
         }
         else {
             if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
-                    Player foundPlayer = playerDao.findByUsername(player.getUsername());
-                    player.setBalance(player.getBalance() + player.getBet());
-                    playerDao.save(foundPlayer);
-                }
+                Player foundPlayer = playerDao.findByUsername(player.getUsername());
+                player.setBalance(player.getBalance() + player.getBet());
+                playerDao.save(foundPlayer);
             }
         }
+    }
 
     public boolean dealer_bj_check(Dealer dealer)
     {
@@ -192,6 +241,26 @@ public class BlackJackService {
     public Dealer getDealer() {
         Dealer dealer = dealerDao.findAll().get(0);
         return dealer;
+    }
+
+    public void reset(String room) {
+        Dealer dealer = dealerDao.findAll().get(0);
+        dealer.clear_hand();
+        dealerDao.save(dealer);
+        List <Player> players = playerDao.findAll().stream().filter(player -> player.getRoom().equals(room)).collect(Collectors.toList());
+        players.forEach(
+                player -> {
+                    if(playerDao.findByUsername(player.getUsername()) != null) {
+                        System.out.println(player.getUsername());
+                        player.clear_hand();
+                        playerDao.save(player);
+                    }
+                    else {
+                        log.error(player.getUsername() + " does not exist.");
+                    }
+                }
+        );
+
     }
 }
 

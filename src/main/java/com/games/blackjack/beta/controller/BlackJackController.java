@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,22 +23,17 @@ public class BlackJackController {
     }
 
     @PostMapping("/hit")
-    public boolean hit(@RequestBody Player player) {
+    public int hit(@RequestBody Player player) {
         return service.hit(player);
     }
 
-    @PostMapping("/isBust")
-    public boolean isBust(@RequestBody Player player) {
-        return service.isBust(player);
+    @PostMapping("/dealerHit")
+    public List<Integer> dealerHit() {
+        return service.dealerHit();
     }
 
     @PostMapping("/bj")
     public boolean bj(@RequestBody Player player) { return service.isBlackJack(player); }
-
-    @PostMapping("/is21")
-    public void is21(@RequestBody Player player) {
-        service.is21(player);
-    }
 
     @PostMapping("/dealerWon")
     public void dealerWon(@RequestBody List<Player> players) {
@@ -54,8 +50,11 @@ public class BlackJackController {
     public boolean dealer_bj_check(@RequestBody Dealer dealer){ return service.dealer_bj_check(dealer); }
 
     @GetMapping("/getDealer")
-    public Dealer getDealerDao() {
-        return service.getDealer();
+    public Dealer getDealerDao() { return service.getDealer(); }
+
+    @GetMapping("/reset/{room}")
+    public void getPlayersInRoom(@PathVariable("room") String room) {
+        service.reset(room);
     }
 }
 
