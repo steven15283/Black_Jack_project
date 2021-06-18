@@ -46,8 +46,6 @@ function showCards(room, activePlayer, busted) {
 
                 document.getElementById('player').appendChild(div_player);
 
-                console.log("activePlayer.username ", activePlayer.username)
-                console.log("players[i].username ", players[i].username)
                 document.getElementById('player_' + players[i].username).classList.remove('active');
                 if(players[i].username == activePlayer.username) {
                     document.getElementById('player_' + activePlayer.username).classList.add('active');

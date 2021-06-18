@@ -25,8 +25,8 @@ public class PlayerController {
     }
 
     @PostMapping("register/newPlayer")
-    public void createPlayer(@RequestBody Player player) {
-        service.save(player);
+    public boolean createPlayer(@RequestBody Player player) {
+        return service.save(player);
     }
 
     @GetMapping("/player/{user}")
@@ -39,7 +39,7 @@ public class PlayerController {
     }
 
     @GetMapping("/player/players/room/{room}")
-    public List<Player> getPlayersInRoom(@PathVariable("room") int room) {
-        return service.listAll().stream().filter(player -> player.getRoom() == room).collect(Collectors.toList());
+    public List<Player> getPlayersInRoom(@PathVariable("room") String room) {
+        return service.listAll().stream().filter(player -> player.getRoom().equals(room)).collect(Collectors.toList());
     }
 }

@@ -48,7 +48,7 @@ function getWinners(winners){
         if(winners == maxPlayers) {
 //            div_winnersid.innerHTML = player_global[winners] + " won against Dealer";
         } else {
-            div_winnersid.innerHTML = player_global[winners].username + " won against Dealer";
+            div_winnersid.innerHTML = player_global[winners[i]].username + " won against Dealer";
         }
 
         div_winners.appendChild(div_winnersid);
@@ -102,6 +102,7 @@ function createPlayer(username) {
       var jsonData =
       {
         "username" : username,
+        "room" : "1"
       }
 
       saveData = $.ajax({
@@ -116,36 +117,55 @@ function createPlayer(username) {
 }
 
 function callDealerApi() {
+    var url = window.location.href
+//    var room = url[url.search(".com/") + 5]
+    var room = url[url.search("8080/") + 5]
+
+    console.log(room)
     $.ajax({
         url : 'api/v1/blackjack/getDealer',
         type : 'GET',
         dataType : 'json',
         success : function(data) {
-            getPlayersInRoom(1)
+            getPlayersInRoom(room)
         }
     });
 }
 
-function startGame() {
-      var jsonData = [
-          {
-                "username" : "steven"
-          },
-          {
-                "username" : "mike"
-          },
-          {
-                "username" : "ken"
-          },
-      ]
+window.onload = function() {
+    var url = window.location.href
+//    var room = url[url.search(".com/") + 5]
+    var room = url[url.search("8080/") + 5]
+    room_global = room
+    document.getElementById("room").innerHTML = room_global
+}
 
-      saveData = $.ajax({
-            type: 'POST',
-            url: "api/v1/blackjack/start",
-            data: JSON.stringify(jsonData),
-            dataType: "json",
-            contentType: "application/json",
-      });
+function startGame() {
+    var url = window.location.href
+//    var room = url[url.search(".com/") + 5]
+    var room = url[url.search("8080/") + 5]
+     $.ajax({
+            url : 'api/v1/player/players/room/' + room,
+            type : 'GET',
+            dataType : 'json',
+            success : function(data) {
+
+                  var jsonData = []
+
+                  for(var i=0; i < data.length; i++) {
+                    jsonData.push(data[i])
+                  }
+
+                  $.ajax({
+                        type: 'POST',
+                        url: "api/v1/blackjack/start",
+                        data: JSON.stringify(jsonData),
+                        dataType: "json",
+                        contentType: "application/json",
+                  });
+
+            }
+    });
 
       document.getElementById("gameButtons").style.display="block";
 }
@@ -158,7 +178,6 @@ function getPlayersInRoom(room){
             success : function(data) {
                 playerTurn(data)
                 showCards(room, player_global[curPlayers], false);
-                room_global = room
             }
     });
 }

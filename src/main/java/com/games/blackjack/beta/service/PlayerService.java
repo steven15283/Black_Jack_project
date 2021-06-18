@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service //annotation to tell framework that this is the service class
 public class PlayerService {
@@ -22,9 +23,15 @@ public class PlayerService {
         return playerDao.findAll();
     }
 
-    public void save(Player player) {
-        player.setBalance(1000);
-        playerDao.save(player);
+    public boolean save(Player player) {
+        int size = playerDao.findAll().stream().filter(foundplayer -> foundplayer.getRoom().equals(player.getRoom())).collect(Collectors.toList()).size();
+        if(size < 5) {
+            player.setBalance(1000);
+            playerDao.save(player);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public Player get(String username) {
