@@ -167,7 +167,10 @@ function startGame() {
             }
     });
 
-      document.getElementById("gameButtons").style.display="block";
+    document.getElementById("gameButtons").style.display="block";
+    setTimeout(function () {
+        callDealerApi();
+    }, 1000);
 }
 
 function getPlayersInRoom(room){
@@ -189,26 +192,7 @@ function playerTurn(players) {
 }
 
 function hit(){
-    console.log(curPlayers)
-    if(curPlayers >= maxPlayers) {
-       $.ajax({
-              url : 'api/v1/blackjack/dealerHit',
-              type : 'POST',
-              success : function(data) {
-                  getDealer(true);
-                  for(var i = 0; i < data.length; i++) {
-                    if(data[i] < maxPlayers) {
-                        console.log("Winners are " + player_global[data[i]].username)
-                    }
-                    else {
-                        console.log("Winners are Dealer")
-                    }
-                  }
-                  getWinners(data)
-              }
-       });
-    }
-    else {
+    if(curPlayers < maxPlayers) {
         var data = {
              "username" : player_global[curPlayers].username
         }
@@ -223,7 +207,7 @@ function hit(){
                       showCards(room_global, player_global[curPlayers], true);
                       setTimeout(function () {
                           standEvent()
-                      }, 2000);
+                      }, 1000);
                    } else {
                       showCards(room_global, player_global[curPlayers], false);
                    }
@@ -239,6 +223,24 @@ function standEvent(){
     }
     else {
        getDealer(true);
+       if(curPlayers >= maxPlayers) {
+          $.ajax({
+                 url : 'api/v1/blackjack/dealerHit',
+                 type : 'POST',
+                 success : function(data) {
+                     getDealer(true);
+                     for(var i = 0; i < data.length; i++) {
+                       if(data[i] < maxPlayers) {
+                           console.log("Winners are " + player_global[data[i]].username)
+                       }
+                       else {
+                           console.log("Winners are Dealer")
+                       }
+                     }
+                     getWinners(data)
+                 }
+          });
+       }
     }
 }
 
