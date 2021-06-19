@@ -38,7 +38,6 @@ public class BlackJackService {
                         if(playerDao.findByUsername(player.getUsername()) != null) {
                             System.out.println(player.getUsername());
                             player.setInGame(true);
-                            player.setRoom("1");
                             playerDao.save(player);
                         }else {
                             log.error(player.getUsername() + " does not exist.");

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Game</title>
     <link href="css/cards.css" rel="stylesheet" />
     <link href="css/button.css" rel="stylesheet" />
 </head>
@@ -21,20 +21,18 @@
 <div id="player" class="playerGroup"></div>
 
 
-
-<div style="text-align:center">
-    <button onclick="getPlayers();">Get Players</button>
-
-    <button onclick="startGame();">Start Game</button>
-    <button onclick="callDealerApi();">playerTurn</button>
-    <button onclick="createTestPlayers()">create Test Players</button>
-</div>
-<br>
-<div id="gameButtons" style="text-align:center; display:none;">
-    <button class="button-slide" onclick="hit()"><span class='text'>Hit</span><span class="icon"></span></button>
-    <button class="button-slide" onclick="standEvent()"><span class='text'>Stand</span><span class="icon"></span></button>
-</div>
-
+    <div style="text-align:center">
+<!--        <button onclick="getPlayers();">Get Players</button>-->
+        <button class="button-slide" onclick="startGame();"><span class='text'>Start Game</span><span class="icon"></span></button>
+<!--        <button onclick="callDealerApi();">playerTurn</button>-->
+<!--        <button onclick="createTestPlayers()">create Test Players</button>-->
+    </div>
+    <br>
+    <div id="gameButtons" style="text-align:center; display:none;">
+        <button class="button-slide" onclick="hit()"><span class='text'>Hit</span><span class="icon"></span></button>
+        <button class="button-slide" onclick="standEvent()"><span class='text'>Stand</span><span class="icon"></span></button>
+    </div>
+<button onclick="reset();">reset</button>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="js/cards.js"></script>
 <script src="js/api.js"></script>

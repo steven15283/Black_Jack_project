@@ -11,7 +11,7 @@ import java.util.*;
 @Slf4j
 public class Deck {
     @Id
-    //@GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     @OneToMany(targetEntity=Card.class, cascade = {CascadeType.ALL})
     private List<Card> pile;

@@ -25,8 +25,8 @@ public class PlayerController {
     }
 
     @PostMapping("register/newPlayer")
-    public void createPlayer(@RequestBody Player player) {
-        service.save(player);
+    public boolean createPlayer(@RequestBody Player player) {
+        return service.save(player);
     }
 
     @GetMapping("/player/{user}")
