@@ -22,11 +22,11 @@ public class Deck {
 
     public Deck() {//initialize deck with 100 cards
         super();
-        System.out.println("afsdklhjfsd");
+//        System.out.println("afsdklhjfsd");
         this.pile = new ArrayList<Card>();
-        System.out.println("deck()");
+//        System.out.println("deck()");
         for (int i = 0; i < 8; i++) {
-            System.out.println("for loop:" + i);
+//            System.out.println("for loop:" + i);
             for (int j = 1; j <= 13; j++) {
                 Card card = new Card(j);
                 log.info(card.toString());
@@ -34,9 +34,9 @@ public class Deck {
                 System.out.println(card.toString());
             }
         }
-        System.out.println("finish insert cards");
+//        System.out.println("finish insert cards");
         shuffle();
-        System.out.println("finish fhuffling cards");
+//        System.out.println("finish fhuffling cards");
     }
 
     public Deck(String id, List<Card> deck) {

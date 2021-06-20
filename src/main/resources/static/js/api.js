@@ -24,6 +24,16 @@ var checkIfGameStart = setInterval(function(){
         dealerHit()
     }
     $.ajax({
+        url : '/api/v1/player/players/room/' + room_global,
+        type : 'GET',
+        dataType : 'json',
+        success : function(data) {
+            player_global = data
+            maxPlayers = data.length
+            showPlayers(data)
+        }
+    });
+    $.ajax({
         // Build environment
         // url : 'http:localhost:8080/api/v1/players/',
         url : '/api/v1/room/status/' + room_global,
@@ -33,21 +43,12 @@ var checkIfGameStart = setInterval(function(){
             if(data) {
                 document.getElementById("startButton").style.display="none";
                 document.getElementById("gameButtons").style.display="block";
-                 $.ajax({
-                        url : '/api/v1/player/players/room/' + room_global,
-                        type : 'GET',
-                        dataType : 'json',
-                        success : function(data) {
-                            player_global = data
-                            maxPlayers = data.length
-                            if(firstTimeDealer) {
-                              setTimeout(function () {
-                                  getDealer(false);
-                                  firstTimeDealer = false;
-                              }, 1000);
-                            }
-                        }
-                });
+                if(firstTimeDealer) {
+                  setTimeout(function () {
+                      getDealer(false);
+                      firstTimeDealer = false;
+                  }, 1000);
+                }
             }
         }
     });
@@ -89,6 +90,24 @@ function getDealer(dealersTurn) {
                 showDealerCards(dealersTurn, data);
             }
     });
+}
+
+function showPlayers(players){
+    document.getElementById('playersInRoom').innerHTML = ""
+
+    var div_players = document.createElement('div');
+    for(var i = 0; i < players.length; i++) {
+        var div_playerid = document.createElement('div');
+
+        div_players.className = 'player';
+
+        div_playerid.innerHTML = players[i].username;
+
+
+        div_players.appendChild(div_playerid);
+        document.getElementById('playersInRoom').appendChild(div_players);
+    }
+
 }
 
 function getWinners(winners){
