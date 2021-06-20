@@ -31,6 +31,7 @@ var checkIfGameStart = setInterval(function(){
         dataType : 'json',
         success : function(data) {
             if(data) {
+                document.getElementById("startButton").style.display="none";
                 document.getElementById("gameButtons").style.display="block";
                  $.ajax({
                         url : '/api/v1/player/players/room/' + room_global,
@@ -204,7 +205,8 @@ function startGame() {
             }
     });
 
-    document.getElementById("gameButtons").style.display="block";
+//    document.getElementById("startButton").style.display="none";
+//    document.getElementById("gameButtons").style.display="block";
 
     var roomData = {
          "id" : room_global,
