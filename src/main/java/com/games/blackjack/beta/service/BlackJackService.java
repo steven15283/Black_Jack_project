@@ -1,18 +1,17 @@
 package com.games.blackjack.beta.service;
 
-import com.games.blackjack.beta.model.Card;
-import com.games.blackjack.beta.model.Dealer;
-import com.games.blackjack.beta.model.Deck;
-import com.games.blackjack.beta.model.Player;
+import com.games.blackjack.beta.model.*;
 import com.games.blackjack.beta.repository.DealerDao;
 import com.games.blackjack.beta.repository.DeckDao;
 import com.games.blackjack.beta.repository.PlayerDao;
+import com.games.blackjack.beta.repository.RoomDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -25,6 +24,8 @@ public class BlackJackService {
     private DeckDao deckDao;
     @Autowired //injects the object into this class. like initializing it see below
     private DealerDao dealerDao;
+    @Autowired //injects the object into this class. like initializing it see below
+    private RoomDao roomdao;
     private static int TWENTY_ONE = 21;
 
 
@@ -36,11 +37,10 @@ public class BlackJackService {
             players.forEach(
                     player -> {
                         if(playerDao.findByUsername(player.getUsername()) != null) {
-                            System.out.println(player.getUsername());
                             player.setInGame(true);
                             playerDao.save(player);
                         }else {
-                            log.error(player.getUsername() + " does not exist.");
+                            log.error("Cannot join game, " + player.getUsername() + " does not exist.");
                         }
                     }
             );
@@ -48,18 +48,19 @@ public class BlackJackService {
     }
 
     public void dealCards(List<Player> players) {
+        String room = players.get(0).getRoom();
         Deck deck = new Deck();//initialize deck
+        deck.setId(room);
+        System.out.println("Deck ID: " + deck.getId() + "has " + deck.getPile().size() + " cards");
         Dealer dealer = new Dealer();
+        dealer.setId(room);
         for(int i =0; i < 2;i++)
         {
             dealer.get_card(deck.draw());//dealer gets a card
-            System.out.println("dealer get card");
             dealer.hide_card();//takes face value of only the first card to simulate that the second card is face down
             players.forEach(
                     player -> {
-                        System.out.println("dealer get card");
                         if(playerDao.findByUsername(player.getUsername()) != null) {
-                            player.setBet(100);
                             dealer.deal_card(deck, player);//player gets a card
                             playerDao.save(player);
                         }
@@ -69,6 +70,8 @@ public class BlackJackService {
         dealer.show_card();//takes both face values of dealer's hand
         deckDao.save(deck);
         dealerDao.save(dealer);
+        System.out.println("Deck ID: " + deck.getId() + "has " + deck.getPile().size() + " cards");
+
     }
 
     public int hit(Player player) {
@@ -80,6 +83,7 @@ public class BlackJackService {
             deckDao.save(deck);
             dealerDao.save(dealer);
             playerDao.save(foundPlayer);
+            System.out.println("Deck ID: " + deck.getId() + " has " + deck.getPile().size() + " cards");
             if (isBust(foundPlayer)) {
                 foundPlayer.setInGame(false);
                 playerDao.save(foundPlayer);
@@ -250,12 +254,15 @@ public class BlackJackService {
         dealer.clear_hand();
         dealerDao.save(dealer);
         Deck deck = deckDao.findAll().get(0);
+        Optional<Room> room1 = roomdao.findById(room);
+        room1.get().setCurrentPlayer(0);
+        roomdao.save(room1.get());
         List <Player> players = playerDao.findAll().stream().filter(player -> player.getRoom().equals(room)).collect(Collectors.toList());
         players.forEach(
                 player -> {
                     if(playerDao.findByUsername(player.getUsername()) != null) {
-                        System.out.println(player.getUsername());
                         player.clear_hand();
+                        System.out.println(player.getUsername() + " hand:" + player.getHand_value());
                         player.setBet(100);
                         //player.setInGame(true);
                         playerDao.save(player);
@@ -284,6 +291,7 @@ public class BlackJackService {
         dealer.show_card();//takes both face values of dealer's hand
         deckDao.save(deck);
         dealerDao.save(dealer);
+
     }
 }
 

@@ -24,8 +24,7 @@ public class Player {
 
     @OneToMany(targetEntity=Card.class, cascade = {CascadeType.ALL})
     private List<Card> hand;
-    @Column(name = "move")
-    private String move;
+
     @Column(name = "is_in_game")
     private boolean isInGame;
     private double bet;
@@ -38,12 +37,11 @@ public class Player {
         this.bet = 0;
     }
 
-    public Player(String username, double balance, List<Card> hand, String move, boolean isInGame) {
+    public Player(String username, double balance, List<Card> hand, boolean isInGame) {
         super();
         this.username = username;
         this.balance = balance;
         this.hand = hand;
-        this.move = move;
         this.isInGame = isInGame;
         this.bet = 0;
     }

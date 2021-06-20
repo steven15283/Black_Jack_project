@@ -22,13 +22,13 @@ function deck(){
 
 function showCards(room, activePlayer, busted) {
      $.ajax({
-        url : 'api/v1/player/players/room/' + room,
+        url : '/api/v1/player/players/room/' + room,
         type : 'GET',
         dataType : 'json',
         success : function(players) {
             document.getElementById('player').innerHTML = ""
             console.log("showcards.players:",  players);
-            console.log("showcards.activePlayer:", activePlayer);
+            //console.log("showcards.activePlayer:", activePlayer);
             for(var i=0; i < players.length; i++) {
             console.log("showcards.players: ", i)
                 var div_player = document.createElement('div');

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/")
 public class PageController {
-    @GetMapping("{roomID}")
-    public String getIndex(@PathVariable("roomID") String roomID) {
+    @GetMapping("{roomID}/user/{username}")
+    public String getIndex(@PathVariable("roomID") String roomID, @PathVariable("username") String username) {
         return "index";
     }
 

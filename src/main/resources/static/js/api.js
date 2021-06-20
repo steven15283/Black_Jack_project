@@ -1,13 +1,67 @@
 var maxPlayers = 0;
 var curPlayers = 0;
 var player_global = [];
-var room_global = 0;
+var room_global = "";
+var user_global = "";
+var endpoint = "8080/";
+var firstTimeDealer = true;
 
-function createTestPlayers() {
-    createPlayer("steven")
-    createPlayer("mike")
-    createPlayer("ken")
+window.onload = function() {
+    var url = window.location.href
+    user_global = url.substring(url.search("user/") + 5)
+    for(var i=0; i < 4; i++) {
+        room_global += url[url.search(endpoint) + 5 + i]
+    }
+
+    document.getElementById("room").innerHTML = room_global
 }
+
+var checkIfGameStart = setInterval(function(){
+    if(curPlayers < maxPlayers && curPlayers != -1 && !firstTimeDealer) {
+        console.log("checkifgamestart.curPlayers:",curPlayers);
+        console.log("checkifgamestart.player_global:",player_global);
+        console.log("checkifgamestart.player_global[curPlayers]:",player_global[curPlayers]);
+        showCards(room_global, player_global[curPlayers], false);
+    }
+    $.ajax({
+        // Build environment
+        // url : 'http:localhost:8080/api/v1/players/',
+        url : '/api/v1/room/status/' + room_global,
+        type : 'GET',
+        dataType : 'json',
+        success : function(data) {
+            if(data) {
+                document.getElementById("gameButtons").style.display="block";
+                 $.ajax({
+                        url : '/api/v1/player/players/room/' + room_global,
+                        type : 'GET',
+                        dataType : 'json',
+                        success : function(data) {
+                            player_global = data
+                            maxPlayers = data.length
+                            if(firstTimeDealer) {
+                              setTimeout(function () {
+                                  getDealer(false);
+                                  firstTimeDealer = false;
+                              }, 1000);
+                            }
+                        }
+                });
+            }
+        }
+    });
+    $.ajax({
+        // Build environment
+        // url : 'http:localhost:8080/api/v1/players/',
+        url : '/api/v1/room/currentPlayer/' + room_global,
+        type : 'GET',
+        dataType : 'json',
+        success : function(data) {
+            curPlayers = data
+        }
+    });
+}, 1000);
+
 function getPlayers() {
     $.ajax({
         // Build environment
@@ -22,13 +76,12 @@ function getPlayers() {
 }
 
 function getCurrentPlayer() {
-
     return player_global[curPlayers].username;
 }
 
 function getDealer(dealersTurn) {
     $.ajax({
-            url : 'api/v1/blackjack/getDealer',
+            url : '/api/v1/blackjack/getDealer',
             type : 'GET',
             dataType : 'json',
             success : function(data) {
@@ -45,11 +98,14 @@ function getWinners(winners){
     for(var i = 0; i < winners.length; i++) {
         var div_winnersid = document.createElement('div');
         console.log("getwinners.player_global.for:", i);
+        console.log("getwinners.maxplayers:", maxPlayers);
         div_winners.className = 'player';
         if(winners[i] == maxPlayers) {
+
             div_winnersid.innerHTML = player_global[i].username + " lost against Dealer";
         }
         else {
+
             div_winnersid.innerHTML = player_global[winners[i]].username + " won against Dealer";
         }
 
@@ -119,35 +175,19 @@ function createPlayer(username) {
 }
 
 function callDealerApi() {
-    var url = window.location.href
-//    var room = url[url.search(".com/") + 5]
-    var room = url[url.search("8080/") + 5]
-
-    console.log(room)
     $.ajax({
-        url : 'api/v1/blackjack/getDealer',
+        url : '/api/v1/blackjack/getDealer',
         type : 'GET',
         dataType : 'json',
         success : function(data) {
-            getPlayersInRoom(room)
+            getPlayersInRoom(room_global)
         }
     });
 }
 
-window.onload = function() {
-    var url = window.location.href
-//    var room = url[url.search(".com/") + 5]
-    var room = url[url.search("8080/") + 5]
-    room_global = room
-    document.getElementById("room").innerHTML = room_global
-}
-
 function startGame() {
-    var url = window.location.href
-//    var room = url[url.search(".com/") + 5]
-    var room = url[url.search("8080/") + 5]
      $.ajax({
-            url : 'api/v1/player/players/room/' + room,
+            url : '/api/v1/player/players/room/' + room_global,
             type : 'GET',
             dataType : 'json',
             success : function(data) {
@@ -160,7 +200,7 @@ function startGame() {
 
                   $.ajax({
                         type: 'POST',
-                        url: "api/v1/blackjack/start",
+                        url: "/api/v1/blackjack/start",
                         data: JSON.stringify(jsonData),
                         dataType: "json",
                         contentType: "application/json",
@@ -170,6 +210,18 @@ function startGame() {
     });
 
     document.getElementById("gameButtons").style.display="block";
+
+    var roomData = {
+         "id" : room_global,
+         "gameStarted" : true
+    }
+    $.ajax({
+        type: 'POST',
+        url: "/api/v1/room/status/",
+        data: JSON.stringify(roomData),
+        dataType: "json",
+        contentType: "application/json"
+    });
     setTimeout(function () {
         callDealerApi();
     }, 1000);
@@ -177,15 +229,22 @@ function startGame() {
 
 function getPlayersInRoom(room){
      $.ajax({
-            url : 'api/v1/player/players/room/' + room,
+            url : '/api/v1/player/players/room/' + room,
             type : 'GET',
             dataType : 'json',
             success : function(data) {
                 playerTurn(data);
-                //console.log("getplayersinroom.curPlayers:",curPlayers);
-                //console.log("getplayersinroom.player_global:",player_global);
-                //console.log("getplayersinroom.player_global[curPlayers]:",player_global[curPlayers]);
-                showCards(room, player_global[curPlayers], false);
+                console.log("getplayersinroom.curPlayers:",curPlayers);
+                console.log("getplayersinroom.player_global:",player_global);
+                console.log("getplayersinroom.player_global[curPlayers]:",player_global[curPlayers]);
+                if(curPlayers < maxPlayers)
+                {
+                    showCards(room, player_global[curPlayers], false);
+                }
+                else
+                {
+                    //showCards(room, player_global[curPlayers], false);
+                }
             }
     });
 }
@@ -197,12 +256,12 @@ function playerTurn(players) {
 }
 
 function hit(){
-    if(curPlayers < maxPlayers) {
+    if(curPlayers < maxPlayers && user_global == player_global[curPlayers].username) {
         var data = {
              "username" : player_global[curPlayers].username
         }
         $.ajax({
-               url : 'api/v1/blackjack/hit',
+               url : '/api/v1/blackjack/hit',
                type : 'POST',
                data: JSON.stringify(data),
                contentType: "application/json",
@@ -212,7 +271,7 @@ function hit(){
                       showCards(room_global, player_global[curPlayers], true);
                       setTimeout(function () {
                           standEvent()
-                      }, 1000);
+                      }, 2000);
                    } else {
                       showCards(room_global, player_global[curPlayers], false);
                    }
@@ -222,37 +281,52 @@ function hit(){
 }
 
 function standEvent(){
-    curPlayers = curPlayers + 1;
-    if(curPlayers < maxPlayers) {
-        showCards(room_global, player_global[curPlayers], false);
-    }
-    else {
-       getDealer(true);
-       if(curPlayers >= maxPlayers) {
-          $.ajax({
-                 url : 'api/v1/blackjack/dealerHit',
-                 type : 'POST',
-                 success : function(data) {
-                     getDealer(true);
-                     for(var i = 0; i < data.length; i++) {
-                       if(data[i] < maxPlayers) {
-                           console.log("Winners are " + player_global[data[i]].username)
+    if(curPlayers < maxPlayers && curPlayers != -1) {
+        if(user_global == player_global[curPlayers].username) {
+    //        curPlayers = curPlayers + 1;
+            var roomData = {
+                 "id" : room_global,
+                 "currentPlayer" : curPlayers + 1
+            }
+            $.ajax({
+                type: 'POST',
+                url: "/api/v1/room/status/",
+                data: JSON.stringify(roomData),
+                dataType: "json",
+                contentType: "application/json"
+            });
+        }
+        setTimeout(function () {
+            if(curPlayers >= maxPlayers) {
+              getDealer(true);
+              if(curPlayers >= maxPlayers) {
+                $.ajax({
+                   url : '/api/v1/blackjack/dealerHit',
+                   type : 'POST',
+                   success : function(data) {
+                       getDealer(true);
+                       for(var i = 0; i < data.length; i++) {
+                         if(data[i] < maxPlayers) {
+                             console.log("Winners are " + player_global[data[i]].username)
+                         }
+                         else {
+                             console.log("Winners are Dealer")
+                         }
                        }
-                       else {
-                           console.log("Winners are Dealer")
-                       }
-                     }
-                     getWinners(data)
-                 }
-          });
-       }
+                       getWinners(data)
+                   }
+                });
+              }
+            }
+        }, 1000);
     }
+
 }
 
 function reset(){
 
     $.ajax({
-                url : 'api/v1/blackjack/reset/' + room_global,
+                url : '/api/v1/blackjack/reset/' + room_global,
                 type : 'GET',
                 dataType : 'json'
         });
@@ -260,12 +334,17 @@ function reset(){
         document.getElementById("winners").innerHTML = ""
         document.getElementById("dealer").innerHTML = ""
         document.getElementById("player").innerHTML = ""
-        curPlayers = 0;
-        callDealerApi();
+        console.log("reset.players",player_global);
+        //callDealerApi();
         setTimeout(function () {
-        getDealer(false);
-        showCards(room_global, player_global[curPlayers], false);
-                              }, 1000);
+            getDealer(false);
+            curPlayers = 0;
+            console.log("reset.curPlayers:",curPlayers);
+            console.log("reset.player_global:",player_global);
+            console.log("reset.player_global[curPlayers]:",player_global[curPlayers]);
+            getPlayersInRoom(room_global);
+            //showCards(room_global, player_global[curPlayers], false);
+        }, 1000);
 
 
 }
@@ -287,29 +366,6 @@ function reset(){
 //function dealerWon(players){
 //       players = $.ajax({
 //               url : 'api/v1/blackjack/dealerWon',
-//               type : 'GET',
-//               dataType : 'json',
-//               success : function(data) {
-//                   console.log(data)
-//               }
-//           });
-//}
-//
-//function dealer_reach_limit(dealer){
-//      $.ajax({
-//              url : 'api/v1/blackjack/dealerRL',
-//              type : 'POST',
-//              data: JSON.stringify(dealer),
-//              dataType : 'json',
-//              success : function(dealer) {
-//                  console.log(dealer)
-//              }
-//          });
-//}
-//
-//function checkHand(player){
-//       players = $.ajax({
-//               url : 'api/v1/blackjack/checkHand',
 //               type : 'GET',
 //               dataType : 'json',
 //               success : function(data) {

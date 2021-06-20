@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="/">
 <head>
     <meta charset="UTF-8">
     <title>Game</title>
-    <link href="css/cards.css" rel="stylesheet" />
-    <link href="css/button.css" rel="stylesheet" />
+    <link th:href="@{/css/cards.css}" rel="stylesheet" />
+    <link th:href="@{/css/button.css}" rel="stylesheet" />
 </head>
 <body>
 
@@ -32,9 +32,10 @@
         <button class="button-slide" onclick="hit()"><span class='text'>Hit</span><span class="icon"></span></button>
         <button class="button-slide" onclick="standEvent()"><span class='text'>Stand</span><span class="icon"></span></button>
     </div>
-<button onclick="reset();">reset</button>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="js/cards.js"></script>
-<script src="js/api.js"></script>
+    <button onclick="reset();">reset</button>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script th:src="@{/js/cards.js}"></script>
+    <script th:src="@{/js/api.js}"></script>
+
 </body>
 </html>
