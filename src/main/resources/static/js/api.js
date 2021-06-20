@@ -20,6 +20,9 @@ var checkIfGameStart = setInterval(function(){
     if(curPlayers < maxPlayers && curPlayers != -1 && !firstTimeDealer) {
         showCards(room_global, player_global[curPlayers], false);
     }
+    if(curPlayers >= maxPlayers) {
+        dealerHit()
+    }
     $.ajax({
         // Build environment
         // url : 'http:localhost:8080/api/v1/players/',
@@ -262,6 +265,32 @@ function hit(){
     }
 }
 
+function dealerHit() {
+    setTimeout(function () {
+        if(curPlayers >= maxPlayers) {
+          getDealer(true);
+          if(curPlayers >= maxPlayers) {
+            $.ajax({
+               url : '/api/v1/blackjack/dealerHit',
+               type : 'POST',
+               success : function(data) {
+                   getDealer(true);
+                   for(var i = 0; i < data.length; i++) {
+                     if(data[i] < maxPlayers) {
+                         console.log("Winners are " + player_global[data[i]].username)
+                     }
+                     else {
+                         console.log("Winners are Dealer")
+                     }
+                   }
+                   getWinners(data)
+               }
+            });
+          }
+        }
+    }, 1000);
+}
+
 function standEvent(){
     if(curPlayers < maxPlayers && curPlayers != -1) {
         if(user_global == player_global[curPlayers].username) {
@@ -280,29 +309,7 @@ function standEvent(){
         }
 //        console.log("stand, ", curPlayers)
 //        showCards(room_global, player_global[curPlayers], false);
-        setTimeout(function () {
-            if(curPlayers >= maxPlayers) {
-              getDealer(true);
-              if(curPlayers >= maxPlayers) {
-                $.ajax({
-                   url : '/api/v1/blackjack/dealerHit',
-                   type : 'POST',
-                   success : function(data) {
-                       getDealer(true);
-                       for(var i = 0; i < data.length; i++) {
-                         if(data[i] < maxPlayers) {
-                             console.log("Winners are " + player_global[data[i]].username)
-                         }
-                         else {
-                             console.log("Winners are Dealer")
-                         }
-                       }
-                       getWinners(data)
-                   }
-                });
-              }
-            }
-        }, 1000);
+        dealerHit();
     }
 //    else if (curPlayers >= maxPlayers) {
 //       getDealer(true);
