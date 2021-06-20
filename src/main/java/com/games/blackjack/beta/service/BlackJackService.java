@@ -35,11 +35,10 @@ public class BlackJackService {
             players.forEach(
                     player -> {
                         if(playerDao.findByUsername(player.getUsername()) != null) {
-                            System.out.println(player.getUsername());
                             player.setInGame(true);
                             playerDao.save(player);
                         }else {
-                            log.error(player.getUsername() + " does not exist.");
+                            log.error("Cannot join game, " + player.getUsername() + " does not exist.");
                         }
                     }
             );
@@ -47,18 +46,19 @@ public class BlackJackService {
     }
 
     public void dealCards(List<Player> players) {
+        String room = players.get(0).getRoom();
         Deck deck = new Deck();//initialize deck
+        deck.setId(room);
+        System.out.println("Deck ID: " + deck.getId() + "has " + deck.getPile().size() + " cards");
         Dealer dealer = new Dealer();
+        dealer.setId(room);
         for(int i =0; i < 2;i++)
         {
             dealer.get_card(deck.draw());//dealer gets a card
-            System.out.println("dealer get card");
             dealer.hide_card();//takes face value of only the first card to simulate that the second card is face down
             players.forEach(
                     player -> {
-                        System.out.println("dealer get card");
                         if(playerDao.findByUsername(player.getUsername()) != null) {
-                            player.setBet(100);
                             dealer.deal_card(deck, player);//player gets a card
                             playerDao.save(player);
                         }
@@ -68,6 +68,8 @@ public class BlackJackService {
         dealer.show_card();//takes both face values of dealer's hand
         deckDao.save(deck);
         dealerDao.save(dealer);
+        System.out.println("Deck ID: " + deck.getId() + "has " + deck.getPile().size() + " cards");
+
     }
 
     public int hit(Player player) {
@@ -79,6 +81,7 @@ public class BlackJackService {
             deckDao.save(deck);
             dealerDao.save(dealer);
             playerDao.save(foundPlayer);
+            System.out.println("Deck ID: " + deck.getId() + " has " + deck.getPile().size() + " cards");
             if (isBust(foundPlayer)) {
                 foundPlayer.setInGame(false);
                 playerDao.save(foundPlayer);

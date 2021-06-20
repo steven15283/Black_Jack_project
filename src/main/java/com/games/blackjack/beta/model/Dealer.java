@@ -11,26 +11,25 @@ import java.util.Stack;
 @Getter
 public class Dealer {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private String id;
     @OneToMany(targetEntity=Card.class, cascade = {CascadeType.ALL})
     private List<Card> hand;
     private int hand_value;
+
     public Dealer(){
         this.hand = new ArrayList<Card>();
         this.hand_value = 0;
     }
 
-
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public void get_card(Card card){
-        System.out.println("b4 adding to dealer hand");
-        System.out.println("card:" + card.toString());
+//        System.out.println("card:" + card.toString());
         hand.add(card);
         hand_value += card.get_face_value();
         System.out.println("hand:" + hand.toString());
-
-        System.out.println("after adding to dealer hand");
     }
 
     public void hide_card(){

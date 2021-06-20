@@ -1,10 +1,3 @@
-function getNewPlayerInfo() {
-    var values = {};
-    $.each($('#newPlayer').serializeArray(), function(i, field) {
-        values[field.name] = field.value;
-    });
-}
-
 function joinGame() {
     var values = {};
     $.each($('#newPlayer').serializeArray(), function(i, field) {
@@ -19,7 +12,7 @@ function joinGame() {
         contentType: "application/json",
         success: function(data) {
             if(data) {
-                window.location.href = "/" + values.room;
+                window.location.href = "/" + values.room + "/user/" + values.username;
             } else {
                 alert("you can't join that room, max of 5 already full")
             }

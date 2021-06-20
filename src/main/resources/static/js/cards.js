@@ -22,7 +22,7 @@ function deck(){
 
 function showCards(room, activePlayer, busted) {
      $.ajax({
-        url : 'api/v1/player/players/room/' + room,
+        url : '/api/v1/player/players/room/' + room,
         type : 'GET',
         dataType : 'json',
         success : function(players) {

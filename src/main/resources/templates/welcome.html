@@ -9,14 +9,13 @@
 
     <div class="playerGroup">
         <div class="player">
-            <form id="newPlayer">
+            <form action="javascript:joinGame()" id="newPlayer">
                 <label for="username">Username:</label><br>
                 <input type="text" id="username" name="username"><br>
                 <br>
                 <label for="room">Room ID:</label><br>
-                <input type="text" id="room" name="room"><br><br>
-                <input type="button" onclick="getNewPlayerInfo()" value="Create Game">
-                <input type="button" onclick="joinGame()" value="Join Game">
+                <input type="text" id="room" name="room" minlength="4" maxlength="4" required><br><br>
+                <input type="submit" value="Join Game">
             </form>
         </div>
     </div>

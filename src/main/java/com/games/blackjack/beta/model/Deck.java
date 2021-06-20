@@ -1,5 +1,7 @@
 package com.games.blackjack.beta.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -8,11 +10,13 @@ import java.util.*;
 
 @Entity
 @ToString
+@Getter
+@Setter
 @Slf4j
 public class Deck {
     @Id
     //@GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private String id;
     @OneToMany(targetEntity=Card.class, cascade = {CascadeType.ALL})
     private List<Card> pile;
 
@@ -35,7 +39,7 @@ public class Deck {
         System.out.println("finish fhuffling cards");
     }
 
-    public Deck(long id, List<Card> deck) {
+    public Deck(String id, List<Card> deck) {
         this.id = id;
         this.pile = deck;
     }
