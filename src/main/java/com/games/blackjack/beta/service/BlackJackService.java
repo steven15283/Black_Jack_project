@@ -120,6 +120,9 @@ public class BlackJackService {
                     players.get(i).setBalance(players.get(i).getBalance() + players.get(i).getBet());
                     playerDao.save(players.get(i));
                     winners.add(i);
+//                } else if (players.get(i).getHand_value() == dealer.getHand_value()) {
+//                    playerDao.save(players.get(i));
+//                    winners.add(i);
                 } else if(dealer.getHand_value() > 21) {
                     if(players.get(i).getHand_value() <= 21) {
                         players.get(i).setBalance(players.get(i).getBalance() + players.get(i).getBet());
@@ -186,44 +189,44 @@ public class BlackJackService {
         }
     }
 
-    public void dealer_reach_limit(Dealer dealer) {
-        Deck deck = deckDao.findAll().get(0);
-        Card card = new Card();
-        do{
-            card = deck.draw();
-            dealer.setHand_value(dealer.getHand_value()+card.get_face_value());
-            dealer.get_card(card);
-        }while(dealer.getHand_value() < 17);
+//    public void dealer_reach_limit(Dealer dealer) {
+//        Deck deck = deckDao.findAll().get(0);
+//        Card card = new Card();
+//        do{
+//            card = deck.draw();
+//            dealer.setHand_value(dealer.getHand_value()+card.get_face_value());
+//            dealer.get_card(card);
+//        }while(dealer.getHand_value() < 17);
+//
+//    }
 
-    }
-
-    public void checkHand(Player player) {
-        Dealer dealer = dealerDao.findAll().get(0);
-        if(dealer.getHand_value() > player.getHand_value()) {
-            if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
-                Player foundPlayer = playerDao.findByUsername(player.getUsername());
-
-                if (foundPlayer.getHand_value() < dealer.getHand_value()) {
-                    foundPlayer.setInGame(false);
-                    player.setBalance(player.getBalance() - player.getBet());
-                    playerDao.save(foundPlayer);
-                }
-            }
-        }
-        else if(dealer.getHand_value() == player.getHand_value()){
-            if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
-                Player foundPlayer = playerDao.findByUsername(player.getUsername());
-                playerDao.save(foundPlayer);
-            }
-        }
-        else {
-            if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
-                Player foundPlayer = playerDao.findByUsername(player.getUsername());
-                player.setBalance(player.getBalance() + player.getBet());
-                playerDao.save(foundPlayer);
-            }
-        }
-    }
+//    public void checkHand(Player player) {
+//        Dealer dealer = dealerDao.findAll().get(0);
+//        if(dealer.getHand_value() > player.getHand_value()) {
+//            if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
+//                Player foundPlayer = playerDao.findByUsername(player.getUsername());
+//
+//                if (foundPlayer.getHand_value() < dealer.getHand_value()) {
+//                    foundPlayer.setInGame(false);
+//                    player.setBalance(player.getBalance() - player.getBet());
+//                    playerDao.save(foundPlayer);
+//                }
+//            }
+//        }
+//        else if(dealer.getHand_value() == player.getHand_value()){
+//            if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
+//                Player foundPlayer = playerDao.findByUsername(player.getUsername());
+//                playerDao.save(foundPlayer);
+//            }
+//        }
+//        else {
+//            if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
+//                Player foundPlayer = playerDao.findByUsername(player.getUsername());
+//                player.setBalance(player.getBalance() + player.getBet());
+//                playerDao.save(foundPlayer);
+//            }
+//        }
+//    }
 
     public boolean dealer_bj_check(Dealer dealer)
     {
@@ -259,7 +262,6 @@ public class BlackJackService {
                     }
                 }
         );
-
     }
 }
 

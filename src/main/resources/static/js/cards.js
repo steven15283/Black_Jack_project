@@ -27,7 +27,10 @@ function showCards(room, activePlayer, busted) {
         dataType : 'json',
         success : function(players) {
             document.getElementById('player').innerHTML = ""
+            console.log("showcards.players:",  players);
+            console.log("showcards.activePlayer:", activePlayer);
             for(var i=0; i < players.length; i++) {
+            console.log("showcards.players: ", i)
                 var div_player = document.createElement('div');
                 var div_playerid = document.createElement('div');
                 var div_hand = document.createElement('div');

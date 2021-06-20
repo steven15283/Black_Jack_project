@@ -40,11 +40,11 @@ public class BlackJackController {
         service.dealerWon(players);
     }
 
-    @PostMapping("/dealerRL")
-    public void dealer_reach_limit(Dealer dealer){service.dealer_reach_limit(dealer);}
+//    @PostMapping("/dealerRL")
+//    public void dealer_reach_limit(Dealer dealer){service.dealer_reach_limit(dealer);}
 
-    @PostMapping("/checkHand")
-    public void checkHand(@RequestBody Player player){service.checkHand(player); }
+//    @PostMapping("/checkHand")
+//    public void checkHand(@RequestBody Player player){service.checkHand(player); }
 
     @PostMapping("/dealerBJCheck")
     public boolean dealer_bj_check(@RequestBody Dealer dealer){ return service.dealer_bj_check(dealer); }
@@ -53,8 +53,6 @@ public class BlackJackController {
     public Dealer getDealerDao() { return service.getDealer(); }
 
     @GetMapping("/reset/{room}")
-    public void getPlayersInRoom(@PathVariable("room") String room) {
-        service.reset(room);
-    }
+    public void reset(@PathVariable("room") String room) { service.reset(room);}
 }
 

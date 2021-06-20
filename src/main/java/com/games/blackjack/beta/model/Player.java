@@ -74,5 +74,6 @@ public class Player {
 
     public void clear_hand(){
         hand.clear();
+        hand_value = 0;
     }
 }

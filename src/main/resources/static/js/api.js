@@ -39,15 +39,17 @@ function getDealer(dealersTurn) {
 
 function getWinners(winners){
     document.getElementById('winners').innerHTML = ""
-
+    console.log("getwinners.player_global: ", player_global);
+    console.log("getwinners.winners: ", winners);
     var div_winners = document.createElement('div');
     for(var i = 0; i < winners.length; i++) {
         var div_winnersid = document.createElement('div');
-
+        console.log("getwinners.player_global.for:", i);
         div_winners.className = 'player';
-        if(winners == maxPlayers) {
-//            div_winnersid.innerHTML = player_global[winners] + " won against Dealer";
-        } else {
+        if(winners[i] == maxPlayers) {
+            div_winnersid.innerHTML = player_global[i].username + " lost against Dealer";
+        }
+        else {
             div_winnersid.innerHTML = player_global[winners[i]].username + " won against Dealer";
         }
 
@@ -179,7 +181,10 @@ function getPlayersInRoom(room){
             type : 'GET',
             dataType : 'json',
             success : function(data) {
-                playerTurn(data)
+                playerTurn(data);
+                console.log("getplayersinroom.curPlayers:",curPlayers);
+                console.log("getplayersinroom.player_global:",player_global);
+                console.log("getplayersinroom.player_global[curPlayers]:",player_global[curPlayers]);
                 showCards(room, player_global[curPlayers], false);
             }
     });
@@ -245,6 +250,7 @@ function standEvent(){
 }
 
 function reset(){
+
     $.ajax({
                 url : 'api/v1/blackjack/reset/' + room_global,
                 type : 'GET',
@@ -254,6 +260,7 @@ function reset(){
         document.getElementById("winners").innerHTML = ""
         document.getElementById("dealer").innerHTML = ""
         document.getElementById("player").innerHTML = ""
+        curPlayers = 0;
 }
 //function bj(player){
 //       var data = {
