@@ -249,12 +249,15 @@ public class BlackJackService {
         Dealer dealer = dealerDao.findAll().get(0);
         dealer.clear_hand();
         dealerDao.save(dealer);
+        Deck deck = deckDao.findAll().get(0);
         List <Player> players = playerDao.findAll().stream().filter(player -> player.getRoom().equals(room)).collect(Collectors.toList());
         players.forEach(
                 player -> {
                     if(playerDao.findByUsername(player.getUsername()) != null) {
                         System.out.println(player.getUsername());
                         player.clear_hand();
+                        player.setBet(100);
+                        //player.setInGame(true);
                         playerDao.save(player);
                     }
                     else {
@@ -262,6 +265,25 @@ public class BlackJackService {
                     }
                 }
         );
+
+        for(int i =0; i < 2;i++)
+        {
+            dealer.get_card(deck.draw());//dealer gets a card
+            System.out.println("dealer get card");
+            dealer.hide_card();//takes face value of only the first card to simulate that the second card is face down
+            players.forEach(
+                    player -> {
+                        System.out.println("player get card");
+                        if(playerDao.findByUsername(player.getUsername()) != null) {
+                            dealer.deal_card(deck, player);//player gets a card
+                            playerDao.save(player);
+                        }
+                    }
+            );
+        }
+        dealer.show_card();//takes both face values of dealer's hand
+        deckDao.save(deck);
+        dealerDao.save(dealer);
     }
 }
 

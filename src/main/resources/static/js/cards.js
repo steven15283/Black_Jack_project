@@ -79,6 +79,9 @@ function showCards(room, activePlayer, busted) {
     });
 }
 
+function clear_busted_players(){
+busted_players = [];
+}
 //var myDeck = new deck();
 //
 //window.onload = function() {

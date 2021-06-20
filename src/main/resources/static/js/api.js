@@ -182,9 +182,9 @@ function getPlayersInRoom(room){
             dataType : 'json',
             success : function(data) {
                 playerTurn(data);
-                console.log("getplayersinroom.curPlayers:",curPlayers);
-                console.log("getplayersinroom.player_global:",player_global);
-                console.log("getplayersinroom.player_global[curPlayers]:",player_global[curPlayers]);
+                //console.log("getplayersinroom.curPlayers:",curPlayers);
+                //console.log("getplayersinroom.player_global:",player_global);
+                //console.log("getplayersinroom.player_global[curPlayers]:",player_global[curPlayers]);
                 showCards(room, player_global[curPlayers], false);
             }
     });
@@ -255,12 +255,19 @@ function reset(){
                 url : 'api/v1/blackjack/reset/' + room_global,
                 type : 'GET',
                 dataType : 'json'
-
         });
+        clear_busted_players();
         document.getElementById("winners").innerHTML = ""
         document.getElementById("dealer").innerHTML = ""
         document.getElementById("player").innerHTML = ""
         curPlayers = 0;
+        callDealerApi();
+        setTimeout(function () {
+        getDealer(false);
+        showCards(room_global, player_global[curPlayers], false);
+                              }, 1000);
+
+
 }
 //function bj(player){
 //       var data = {
