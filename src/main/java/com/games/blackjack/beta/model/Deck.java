@@ -31,6 +31,7 @@ public class Deck {
             }
         }
         shuffle();
+
     }
 
     public Deck(String id, List<Card> deck) {

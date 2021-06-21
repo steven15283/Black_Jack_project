@@ -26,10 +26,11 @@ public class RoomController {
     }
 
     @GetMapping("/currentPlayer/{room}")
-    public int getCurrentPlayer(@PathVariable("room") String room) {
+    public Room getCurrentPlayer(@PathVariable("room") String room) {
         if(roomDao.findById(room).isPresent()) {
-            return roomDao.findById(room).get().getCurrentPlayer();
+            return roomDao.findById(room).get();
         }
-        return -1;
+        return new Room();
     }
+
 }

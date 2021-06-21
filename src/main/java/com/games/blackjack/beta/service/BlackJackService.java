@@ -49,11 +49,29 @@ public class BlackJackService {
 
     public void dealCards(List<Player> players) {
         String room = players.get(0).getRoom();
-        Deck deck = new Deck();//initialize deck
-        deck.setId(room);
-        System.out.println("Deck ID: " + deck.getId() + "has " + deck.getPile().size() + " cards");
-        Dealer dealer = new Dealer();
-        dealer.setId(room);
+        Dealer dealer;
+        Deck deck;
+
+        if(dealerDao.findDealerById(room) == null){
+            System.out.println("dealcards.dealerDao.dealerDao.findById(room) == null");
+            dealer = new Dealer();
+            dealer.setId(room);
+        }
+        else{
+            System.out.println("dealcards.dealerDao.dealerDao.findById(room) != null");
+            dealer = dealerDao.findDealerById(room);
+        }
+
+        if(deckDao.findDeckById(room) == null){
+            System.out.println("deckDao.findById(room) == null");
+            deck = new Deck();
+            deck.setId(room);
+        }
+        else{
+            System.out.println("deckDao.findById(room) != null");
+            deck = deckDao.findDeckById(room);
+        }
+
         for(int i =0; i < 2;i++)
         {
             dealer.get_card(deck.draw());//dealer gets a card
@@ -77,8 +95,10 @@ public class BlackJackService {
     public int hit(Player player) {
         if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
             Player foundPlayer = playerDao.findByUsername(player.getUsername());
-            Deck deck = deckDao.findAll().get(0);
-            Dealer dealer = dealerDao.findAll().get(0);
+            String room = foundPlayer.getRoom();
+            System.out.println(room);
+            Deck deck = deckDao.findDeckById(room);
+            Dealer dealer = dealerDao.findDealerById(room);
             dealer.deal_card(deck, foundPlayer);//player gets a card
             deckDao.save(deck);
             dealerDao.save(dealer);
@@ -99,21 +119,22 @@ public class BlackJackService {
         return 4; //Player Not Found
     }
 
-    public List<Integer> dealerHit() {
-        Dealer dealer = dealerDao.findAll().get(0);
-        Deck deck = deckDao.findAll().get(0);
+    public List<Integer> dealerHit(String room) {
+        System.out.println("dealerHit");
+        Dealer dealer = dealerDao.findDealerById(room);
+        Deck deck = deckDao.findDeckById(room);
         while(dealer.getHand_value() < 17){
             dealer.deal_card(deck, dealer);
             dealerDao.save(dealer);
             deckDao.save(deck);
         }
-        return checkHands();
+        return checkHands(room);
     }
 
-    public List<Integer> checkHands() {
+    public List<Integer> checkHands(String room) {
         List<Integer> winners = new ArrayList<>();
         List<Player> players = playerDao.findAll();
-        Dealer dealer = dealerDao.findAll().get(0);
+        Dealer dealer = dealerDao.findDealerById(room);
         for(int i = 0; i < players.size(); i++) {
             if (playerDao.findByUsername(players.get(i).getUsername()) != null) {
                 if (players.get(i).getHand_value() < dealer.getHand_value() && dealer.getHand_value() <= 21) {
@@ -180,7 +201,8 @@ public class BlackJackService {
     }
 
     public void dealerWon(List<Player> players) {
-        Dealer dealer = dealerDao.findAll().get(0);
+        String room = players.get(0).getRoom();
+        Dealer dealer = dealerDao.findDealerById(room);
         if(dealer.getHand_value() == TWENTY_ONE) {
             players.forEach(
                     player -> {
@@ -193,47 +215,9 @@ public class BlackJackService {
         }
     }
 
-//    public void dealer_reach_limit(Dealer dealer) {
-//        Deck deck = deckDao.findAll().get(0);
-//        Card card = new Card();
-//        do{
-//            card = deck.draw();
-//            dealer.setHand_value(dealer.getHand_value()+card.get_face_value());
-//            dealer.get_card(card);
-//        }while(dealer.getHand_value() < 17);
-//
-//    }
-
-//    public void checkHand(Player player) {
-//        Dealer dealer = dealerDao.findAll().get(0);
-//        if(dealer.getHand_value() > player.getHand_value()) {
-//            if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
-//                Player foundPlayer = playerDao.findByUsername(player.getUsername());
-//
-//                if (foundPlayer.getHand_value() < dealer.getHand_value()) {
-//                    foundPlayer.setInGame(false);
-//                    player.setBalance(player.getBalance() - player.getBet());
-//                    playerDao.save(foundPlayer);
-//                }
-//            }
-//        }
-//        else if(dealer.getHand_value() == player.getHand_value()){
-//            if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
-//                Player foundPlayer = playerDao.findByUsername(player.getUsername());
-//                playerDao.save(foundPlayer);
-//            }
-//        }
-//        else {
-//            if(playerDao.findByUsername(player.getUsername()) != null && playerDao.findByUsername(player.getUsername()).isInGame()) {
-//                Player foundPlayer = playerDao.findByUsername(player.getUsername());
-//                player.setBalance(player.getBalance() + player.getBet());
-//                playerDao.save(foundPlayer);
-//            }
-//        }
-//    }
-
-    public boolean dealer_bj_check(Dealer dealer)
+    public boolean dealer_bj_check(String room)
     {
+        Dealer dealer = dealerDao.findDealerById(room);
         if(dealer.getHand_value() == 21)
         {
             return true;
@@ -244,16 +228,17 @@ public class BlackJackService {
         }
     }
 
-    public Dealer getDealer() {
-        Dealer dealer = dealerDao.findAll().get(0);
+    public Dealer getDealer(String room) {
+        Dealer dealer = dealerDao.findDealerById(room);
         return dealer;
     }
 
     public void reset(String room) {
-        Dealer dealer = dealerDao.findAll().get(0);
+        Dealer dealer = dealerDao.findDealerById(room);
         dealer.clear_hand();
+        System.out.println("dealer hand:" + dealer.getHand_value());
         dealerDao.save(dealer);
-        Deck deck = deckDao.findAll().get(0);
+        Deck deck = deckDao.findDeckById(room);
         Optional<Room> room1 = roomdao.findById(room);
         room1.get().setCurrentPlayer(0);
         roomdao.save(room1.get());
@@ -262,9 +247,7 @@ public class BlackJackService {
                 player -> {
                     if(playerDao.findByUsername(player.getUsername()) != null) {
                         player.clear_hand();
-                        System.out.println(player.getUsername() + " hand:" + player.getHand_value());
                         player.setBet(100);
-                        //player.setInGame(true);
                         playerDao.save(player);
                     }
                     else {
@@ -272,25 +255,41 @@ public class BlackJackService {
                     }
                 }
         );
-
-        for(int i =0; i < 2;i++)
-        {
-            dealer.get_card(deck.draw());//dealer gets a card
-            System.out.println("dealer get card");
-            dealer.hide_card();//takes face value of only the first card to simulate that the second card is face down
-            players.forEach(
-                    player -> {
-                        System.out.println("player get card");
-                        if(playerDao.findByUsername(player.getUsername()) != null) {
-                            dealer.deal_card(deck, player);//player gets a card
-                            playerDao.save(player);
-                        }
-                    }
-            );
-        }
-        dealer.show_card();//takes both face values of dealer's hand
-        deckDao.save(deck);
-        dealerDao.save(dealer);
+        dealCards(players);
+        System.out.println(dealer.toString());
+//        players.forEach(
+//                player -> {
+//                    if(playerDao.findByUsername(player.getUsername()) != null) {
+//                        player.clear_hand();
+//                        System.out.println(player.getUsername() + " hand:" + player.getHand_value());
+//                        player.setBet(100);
+//                        //player.setInGame(true);
+//                        playerDao.save(player);
+//                    }
+//                    else {
+//                        log.error(player.getUsername() + " does not exist.");
+//                    }
+//                }
+//        );
+//
+//        for(int i =0; i < 2;i++)
+//        {
+//            dealer.get_card(deck.draw());//dealer gets a card
+//            System.out.println("dealer get card");
+//            dealer.hide_card();//takes face value of only the first card to simulate that the second card is face down
+//            players.forEach(
+//                    player -> {
+//                        System.out.println("player get card");
+//                        if(playerDao.findByUsername(player.getUsername()) != null) {
+//                            dealer.deal_card(deck, player);//player gets a card
+//                            playerDao.save(player);
+//                        }
+//                    }
+//            );
+//        }
+//        dealer.show_card();//takes both face values of dealer's hand
+//        dealerDao.save(dealer);
+//        deckDao.save(deck);
 
     }
 }

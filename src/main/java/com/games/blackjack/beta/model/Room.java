@@ -16,7 +16,7 @@ public class Room {
     private String id;
     private boolean gameStarted;
     private int currentPlayer;
-
+    private boolean roundEnded;
     public Room() {
 
     }

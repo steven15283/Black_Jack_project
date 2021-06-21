@@ -1,6 +1,7 @@
 package com.games.blackjack.beta.model;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Stack;
 
 @Entity
 @Getter
+@ToString
 public class Dealer {
     @Id
     private String id;
@@ -27,6 +29,7 @@ public class Dealer {
 
     public void get_card(Card card){
         hand.add(card);
+        System.out.println("dealer card get: " + card.get_face_value());
         hand_value += card.get_face_value();
         if(hand_value > 21)
         {
@@ -46,6 +49,7 @@ public class Dealer {
 
             }
         }
+        System.out.println("dealer handvalue: " + hand_value);
 
     }
 

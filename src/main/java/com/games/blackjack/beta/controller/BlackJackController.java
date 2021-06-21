@@ -27,30 +27,19 @@ public class BlackJackController {
         return service.hit(player);
     }
 
-    @PostMapping("/dealerHit")
-    public List<Integer> dealerHit() {
-        return service.dealerHit();
+    @PostMapping("/dealerHit/{room}")
+    public List<Integer> dealerHit(@PathVariable("room") String room) {
+        return service.dealerHit(room);
     }
 
     @PostMapping("/bj")
     public boolean bj(@RequestBody Player player) { return service.isBlackJack(player); }
 
-    @PostMapping("/dealerWon")
-    public void dealerWon(@RequestBody List<Player> players) {
-        service.dealerWon(players);
-    }
+    @GetMapping("/dealerBJCheck")
+    public boolean dealer_bj_check(@PathVariable("room") String room){ return service.dealer_bj_check(room); }
 
-//    @PostMapping("/dealerRL")
-//    public void dealer_reach_limit(Dealer dealer){service.dealer_reach_limit(dealer);}
-
-//    @PostMapping("/checkHand")
-//    public void checkHand(@RequestBody Player player){service.checkHand(player); }
-
-    @PostMapping("/dealerBJCheck")
-    public boolean dealer_bj_check(@RequestBody Dealer dealer){ return service.dealer_bj_check(dealer); }
-
-    @GetMapping("/getDealer")
-    public Dealer getDealerDao() { return service.getDealer(); }
+    @GetMapping("/getDealer/{room}")
+    public Dealer getDealerDao(@PathVariable("room") String room) { return service.getDealer(room); }
 
     @GetMapping("/reset/{room}")
     public void reset(@PathVariable("room") String room) { service.reset(room);}
