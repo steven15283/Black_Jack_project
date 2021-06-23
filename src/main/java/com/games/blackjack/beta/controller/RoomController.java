@@ -14,7 +14,13 @@ public class RoomController {
 
     @PostMapping("/status")
     public void saveStatus(@RequestBody Room room) {
-        roomDao.save(room);
+//        if(roomDao.findById(room.getId()).isPresent()) {
+//            Room foundRoom = roomDao.findById(room.getId()).get();
+//            foundRoom.
+//        } else {
+        System.out.println(room.toString());
+            roomDao.save(room);
+//        }
     }
 
     @GetMapping("/status/{room}")
@@ -30,7 +36,9 @@ public class RoomController {
         if(roomDao.findById(room).isPresent()) {
             return roomDao.findById(room).get();
         }
-        return new Room();
+        Room newRoom = new Room();
+        newRoom.setCurrentPlayer(-1);
+        return newRoom;
     }
 
 }

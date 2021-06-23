@@ -1,5 +1,3 @@
-var busted_players = []
-
 function card(value, name, suit){
   this.value = value;
   this.name = name;
@@ -27,10 +25,8 @@ function showCards(room, activePlayer, busted) {
         dataType : 'json',
         success : function(players) {
             document.getElementById('player').innerHTML = ""
-            console.log("showcards.players:",  players);
-            //console.log("showcards.activePlayer:", activePlayer);
+            busted_players = []
             for(var i=0; i < players.length; i++) {
-            console.log("showcards.players: ", i)
                 var div_player = document.createElement('div');
                 var div_playerid = document.createElement('div');
                 var div_hand = document.createElement('div');
@@ -68,10 +64,11 @@ function showCards(room, activePlayer, busted) {
 
                     hand.appendChild(div);
                }
+               if(busted || (players[i].hand_value > 21)) {
+                   busted_players.push(players[i].username)
+               }
             }
-            if(busted) {
-                busted_players.push(activePlayer.username)
-            }
+
             for(var k=0; k < busted_players.length; k++) {
                 document.getElementById('points_' + busted_players[k]).innerHTML = "BUST"
             }
@@ -79,9 +76,6 @@ function showCards(room, activePlayer, busted) {
     });
 }
 
-function clear_busted_players(){
-busted_players = [];
-}
 //var myDeck = new deck();
 //
 //window.onload = function() {

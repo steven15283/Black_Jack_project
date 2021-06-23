@@ -32,14 +32,14 @@ public class BlackJackController {
         return service.dealerHit(room);
     }
 
-    @PostMapping("/bj")
-    public boolean bj(@RequestBody Player player) { return service.isBlackJack(player); }
+//    @PostMapping("/bj")
+//    public boolean bj(@RequestBody Player player) { return service.isBlackJack(player); }
 
-    @GetMapping("/dealerBJCheck")
-    public boolean dealer_bj_check(@PathVariable("room") String room){ return service.dealer_bj_check(room); }
+//    @GetMapping("/dealerBJCheck")
+//    public boolean dealer_bj_check(@PathVariable("room") String room){ return service.dealer_bj_check(room); }
 
     @GetMapping("/getDealer/{room}")
-    public Dealer getDealerDao(@PathVariable("room") String room) { return service.getDealer(room); }
+    public Dealer getDealerDao(@PathVariable("room") String room) { return service.getDealerInRoom(room); }
 
     @GetMapping("/reset/{room}")
     public void reset(@PathVariable("room") String room) { service.reset(room);}

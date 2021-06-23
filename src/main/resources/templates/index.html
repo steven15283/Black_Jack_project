@@ -37,7 +37,10 @@
         <button class="button-slide" onclick="hit()"><span class='text'>Hit</span><span class="icon"></span></button>
         <button class="button-slide" onclick="standEvent()"><span class='text'>Stand</span><span class="icon"></span></button>
     </div>
-    <button onclick="reset();">reset</button>
+    <div id="playAgain" style="text-align:center; display:none;">
+        <button class="button-slide" onclick="reset()"><span class='text'>Play Again</span><span class="icon"></span></button>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script th:src="@{/js/cards.js}"></script>
     <script th:src="@{/js/api.js}"></script>
