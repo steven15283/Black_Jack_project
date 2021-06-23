@@ -1,5 +1,6 @@
 HELP.md
 TODO.txt
+src/main/resources/application-test.yml
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
