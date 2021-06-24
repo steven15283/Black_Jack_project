@@ -3,7 +3,7 @@ var curPlayers = -1;
 var player_global = [];
 var room_global = "";
 var user_global = "";
-var endpoint = "8080/";
+var endpoint = ".com/";
 var firstTimeDealer = true;
 var roundEnded = false;
 
