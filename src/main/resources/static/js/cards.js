@@ -18,7 +18,7 @@ function deck(){
     return cards;
 }
 
-function showCards(room, activePlayer, busted) {
+function showCards(room, activePlayer) {
      $.ajax({
         url : '/api/v1/player/players/room/' + room,
         type : 'GET',
@@ -64,7 +64,7 @@ function showCards(room, activePlayer, busted) {
 
                     hand.appendChild(div);
                }
-               if(busted || (players[i].hand_value > 21)) {
+               if(players[i].hand_value > 21) {
                    busted_players.push(players[i].username)
                }
             }
@@ -74,6 +74,84 @@ function showCards(room, activePlayer, busted) {
             }
         }
     });
+}
+
+function showDealerCards(dealersTurn, dealer) {
+
+    document.getElementById('dealer').innerHTML = ""
+
+    var div_dealer = document.createElement('div');
+    var div_dealerid = document.createElement('div');
+    var div_hand = document.createElement('div');
+    var div_points = document.createElement('div');
+
+    div_points.className = 'points';
+    div_points.id = 'points_dealer';
+    //            div_player.id = 'player_' + player.username;
+    div_dealer.className = 'player';
+    div_hand.id = 'hand_dealer';
+
+    div_dealerid.innerHTML = 'Dealer';
+    div_dealer.appendChild(div_dealerid);
+    div_dealer.appendChild(div_hand);
+    div_dealer.appendChild(div_points);
+    document.getElementById('dealer').appendChild(div_dealer);
+
+    if(dealersTurn) {
+        document.getElementById('points_dealer').innerHTML = dealer.hand_value
+    }
+
+    for(var i=0; i < dealer.hand.length; i++){
+        var hand = document.getElementById('hand_dealer');
+
+        div = document.createElement('div');
+        if(!dealersTurn && i == 1) {
+            div.innerHTML = "";
+        }
+        else {
+            div.innerHTML = dealer.hand[i]._card_name;
+        }
+        div.className = 'card';
+
+        hand.appendChild(div);
+    }
+}
+
+function getWinners(winners){
+    document.getElementById('winners').innerHTML = ""
+
+    var div_winners = document.createElement('div');
+    for(var i = 0; i < winners.length; i++) {
+        var div_winnersid = document.createElement('div');
+
+        div_winners.className = 'player';
+        if(winners[i] == maxPlayers) {
+            div_winnersid.innerHTML = player_global[i].username + " lost against Dealer";
+        } else {
+            div_winnersid.innerHTML = player_global[winners[i]].username + " won against Dealer";
+        }
+
+        div_winners.appendChild(div_winnersid);
+        document.getElementById('winners').appendChild(div_winners);
+    }
+
+}
+
+function showPlayers(players){
+    document.getElementById('playersInRoom').innerHTML = ""
+
+    var div_players = document.createElement('div');
+    for(var i = 0; i < players.length; i++) {
+        var div_playerid = document.createElement('div');
+
+        div_players.className = 'player';
+
+        div_playerid.innerHTML = players[i].username;
+
+        div_players.appendChild(div_playerid);
+        document.getElementById('playersInRoom').appendChild(div_players);
+    }
+
 }
 
 //var myDeck = new deck();
