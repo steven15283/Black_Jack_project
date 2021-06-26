@@ -3,7 +3,7 @@ var curPlayers = -1;
 var player_global = [];
 var room_global = "";
 var user_global = "";
-var endpoint = "8080/";
+var endpoint = ".com/";
 var firstTimeDealer = true;
 var roundEnded = false;
 
@@ -25,7 +25,9 @@ var checkIfGameStart = setInterval(function(){
         success : function(data) {
             curPlayers = data.currentPlayer;
             roundEnded = data.roundEnded;
-
+            if(data.gameStarted && firstTimeDealer) {
+                firstTimeDealer = false;
+            }
             $.ajax({
                 url : '/api/v1/player/players/room/' + room_global,
                 type : 'GET',
@@ -34,52 +36,22 @@ var checkIfGameStart = setInterval(function(){
                     player_global = data
                     maxPlayers = data.length
                     showPlayers(data)
-//    console.log(curPlayers)
-//    console.log(maxPlayers)
+
                     if(curPlayers < maxPlayers && curPlayers != -1 && !firstTimeDealer) {
-//                        setTimeout(function () {
-                        document.getElementById("winners").innerHTML = ""
-                        document.getElementById("startButton").style.display="none";
-                        document.getElementById("playAgain").style.display="none";
-                        document.getElementById("gameButtons").style.display="block";
-                        getDealer(false);
-                        showCards(room_global, player_global[curPlayers]);
-                        if(player_global[curPlayers].hand_value == 0) {
-                            standEvent();
-                        }
-//                        }, 1000);
-                    }
-
-                    if(curPlayers >= maxPlayers) {//infinite loop here
-//                    console.log("here")
-                        dealerHit()
-                        setTimeout(function () {
-                            var roomData = {
-                                "id" : room_global,
-                                "currentPlayer" : -1
-                            }
-                            $.ajax({
-                                type: 'POST',
-                                url: "/api/v1/room/status/",
-                                data: JSON.stringify(roomData),
-                                dataType: "json",
-                                contentType: "application/json"
-                            });
-                        }, 1000);
-
-                        document.getElementById("gameButtons").style.display="none";
-                        document.getElementById("playAgain").style.display="block";
+                        playersTurn();
+                    } else if(curPlayers >= maxPlayers) {
+                        dealersTurn();
                     }
                 }
             });
 
             if(roundEnded){
                 firstTimeDealer = true;
-//                console.log("roundEnded")
                 var roomData = {
                      "id" : room_global,
                      "roundEnded" : false,
-                     "gameStarted" : true
+                     "gameStarted" : true,
+                     "currentPlayer" : 0
                 }
                 $.ajax({
                     type: 'POST',
@@ -92,20 +64,27 @@ var checkIfGameStart = setInterval(function(){
         }
     });
 
-    $.ajax({
-        url : '/api/v1/room/status/' + room_global,
-        type : 'GET',
-        dataType : 'json',
-        success : function(data) {
-//            console.log("Room Status, ", data)
-            if(data) {
-                if(firstTimeDealer) {
-                    firstTimeDealer = false;
-                }
-            }
-        }
-    });
 }, 500);
+
+function dealersTurn() {
+    dealerHit()
+
+    document.getElementById("startButton").style.display="none";
+    document.getElementById("gameButtons").style.display="none";
+    document.getElementById("playAgain").style.display="block";
+}
+
+function playersTurn() {
+    document.getElementById("winners").innerHTML = ""
+    document.getElementById("startButton").style.display="none";
+    document.getElementById("playAgain").style.display="none";
+    document.getElementById("gameButtons").style.display="block";
+    getDealer(false);
+    showCards(room_global, player_global[curPlayers]);
+    if(player_global[curPlayers].hand_value == 0) {
+        standEvent();
+    }
+}
 
 function getDealer(dealersTurn) {
     $.ajax({
@@ -120,31 +99,32 @@ function getDealer(dealersTurn) {
 
 function startGame() {
      $.ajax({
-            url : '/api/v1/player/players/room/' + room_global,
-            type : 'GET',
-            dataType : 'json',
-            success : function(data) {
+        url : '/api/v1/player/players/room/' + room_global,
+        type : 'GET',
+        dataType : 'json',
+        success : function(data) {
 
-                  var jsonData = []
+            var jsonData = []
 
-                  for(var i=0; i < data.length; i++) {
-                    jsonData.push(data[i])
-                  }
-
-                  $.ajax({
-                        type: 'POST',
-                        url: "/api/v1/blackjack/start",
-                        data: JSON.stringify(jsonData),
-                        dataType: "json",
-                        contentType: "application/json",
-                  });
-
+            for(var i=0; i < data.length; i++) {
+            jsonData.push(data[i])
             }
+
+            $.ajax({
+                type: 'POST',
+                url: "/api/v1/blackjack/start",
+                data: JSON.stringify(jsonData),
+                dataType: "json",
+                contentType: "application/json",
+            });
+
+        }
     });
 
     var roomData = {
          "id" : room_global,
-         "gameStarted" : true
+         "gameStarted" : true,
+         "currentPlayer" : 0
     }
     $.ajax({
         type: 'POST',
@@ -199,8 +179,7 @@ function standEvent(){
     {
         if(user_global == player_global[curPlayers].username)
         {
-            var roomData =
-            {
+            var roomData = {
                  "id" : room_global,
                  "currentPlayer" : curPlayers + 1,
                  "gameStarted" : true
@@ -219,27 +198,13 @@ function standEvent(){
 }
 
 function reset(){
-
     $.ajax({
         url : '/api/v1/blackjack/reset/' + room_global,
         type : 'GET',
         dataType : 'json'
     });
-
-    var roomData = {
-         "id" : room_global,
-         "currentPlayer" : -1,
-         "roundEnded" : true,
-         "gameStarted" : true
-    }
-    $.ajax({
-        type: 'POST',
-        url: "/api/v1/room/status/",
-        data: JSON.stringify(roomData),
-        dataType: "json",
-        contentType: "application/json"
-    });
 }
+
 //function bj(player){
 //       var data = {
 //                    "username" : player.getUsername()

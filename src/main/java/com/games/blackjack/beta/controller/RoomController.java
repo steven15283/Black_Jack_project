@@ -13,20 +13,14 @@ public class RoomController {
     private RoomDao roomDao;
 
     @PostMapping("/status")
-    public void saveStatus(@RequestBody Room room) {
-//        if(roomDao.findById(room.getId()).isPresent()) {
-//            Room foundRoom = roomDao.findById(room.getId()).get();
-//            foundRoom.
-//        } else {
-        System.out.println(room.toString());
-            roomDao.save(room);
-//        }
-    }
-
-    @GetMapping("/status/{room}")
-    public boolean getStatus(@PathVariable("room") String room) {
-        if(roomDao.findById(room).isPresent()) {
-            return roomDao.findById(room).get().isGameStarted();
+    public boolean saveStatus(@RequestBody Room room) {
+        if(roomDao.findById(room.getId()).isPresent()) {
+            Room foundRoom = roomDao.findById(room.getId()).get();
+            foundRoom.setGameStarted(room.isGameStarted());
+            foundRoom.setCurrentPlayer(room.getCurrentPlayer());
+            foundRoom.setRoundEnded(room.isRoundEnded());
+            roomDao.save(foundRoom);
+            return true;
         }
         return false;
     }
