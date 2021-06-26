@@ -33,6 +33,7 @@ public class PlayerController {
     public Player getPlayer(@PathVariable("user") String user) {
         return service.get(user);
     }
+
     @DeleteMapping("/player/{user}")
     public void deletePlayer(@PathVariable("user") String user){
         service.delete(user);
@@ -40,6 +41,6 @@ public class PlayerController {
 
     @GetMapping("/player/players/room/{room}")
     public List<Player> getPlayersInRoom(@PathVariable("room") String room) {
-        return service.listAll().stream().filter(player -> player.getRoom().equals(room)).collect(Collectors.toList());
+        return service.returnPlayersInRoom(room);
     }
 }
