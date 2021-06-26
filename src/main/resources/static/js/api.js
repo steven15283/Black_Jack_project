@@ -68,6 +68,7 @@ var checkIfGameStart = setInterval(function(){
 
 function dealersTurn() {
     dealerHit()
+    showCards(room_global, player_global[maxPlayers-1]);
 
     document.getElementById("startButton").style.display="none";
     document.getElementById("gameButtons").style.display="none";
