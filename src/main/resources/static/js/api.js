@@ -206,6 +206,21 @@ function reset(){
     });
 }
 
+function leave() {
+    $.ajax({
+        url : '/api/v1/player/' + user_global,
+        type : 'DELETE',
+        dataType : 'json',
+        success : function(data) {
+            if(data) {
+                window.location.href = "/";
+            }
+        }
+
+    });
+
+}
+
 //function bj(player){
 //       var data = {
 //                    "username" : player.getUsername()
