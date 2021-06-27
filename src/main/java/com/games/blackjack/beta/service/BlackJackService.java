@@ -127,10 +127,12 @@ public class BlackJackService {
     public List<Integer> dealerHit(String room) {
         Dealer dealer = getDealerInRoom(room);
         Deck deck = getDeckInRoom(room);
-        while(dealer.getHand_value() < 17){
-            dealer.deal_card(deck, dealer);
-            dealerDao.save(dealer);
-            deckDao.save(deck);
+        if(dealer != null && deck != null) {
+            while(dealer.getHand_value() < 17){
+                dealer.deal_card(deck, dealer);
+                dealerDao.save(dealer);
+                deckDao.save(deck);
+            }
         }
         return checkHands(room);
     }
@@ -235,11 +237,14 @@ public class BlackJackService {
     public void reset(String room) {
         dealerDao.delete(getDealerInRoom(room));
         deckDao.delete(getDeckInRoom(room));
-        Optional<Room> foundRoom = roomdao.findById(room);
-        foundRoom.get().setCurrentPlayer(0);
-        foundRoom.get().setRoundEnded(true);
-        foundRoom.get().setGameStarted(true);
-        roomdao.save(foundRoom.get());
+
+        if(roomdao.findById(room) != null) {
+            Optional<Room> foundRoom = roomdao.findById(room);
+            foundRoom.get().setCurrentPlayer(0);
+            foundRoom.get().setRoundEnded(true);
+            foundRoom.get().setGameStarted(true);
+            roomdao.save(foundRoom.get());
+        }
 
         List<Player> players = playerDao.findAll().stream().filter(player -> player.getRoom().equals(room)).collect(Collectors.toList());
         players.forEach(

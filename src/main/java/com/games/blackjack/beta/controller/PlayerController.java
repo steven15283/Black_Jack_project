@@ -35,8 +35,8 @@ public class PlayerController {
     }
 
     @DeleteMapping("/player/{user}")
-    public void deletePlayer(@PathVariable("user") String user){
-        service.delete(user);
+    public boolean deletePlayer(@PathVariable("user") Player user){
+        return service.delete(user);
     }
 
     @GetMapping("/player/players/room/{room}")
