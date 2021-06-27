@@ -55,9 +55,20 @@ public class PlayerService {
         return playerDao.findByUsername(username);
     }
 
-    public void delete(String username) {
-        playerDao.delete(playerDao.findByUsername(username));
-
+    public boolean delete(Player player) {
+        if(roomDao.findById(player.getRoom()).isPresent()) {
+            Room room = roomDao.findById(player.getRoom()).get();
+            List<Player> players = room.getPlayers();
+            if(playerDao.findByUsername(player.getUsername()) != null) {
+                Player foundPlayer = playerDao.findByUsername(player.getUsername());
+                players.remove(foundPlayer);
+                room.setPlayers(players);
+                roomDao.save(room);
+                playerDao.delete(foundPlayer);
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<Player> returnPlayersInRoom(String room) {
