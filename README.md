@@ -1,5 +1,5 @@
 # Black_Jack_project
-#https://blackjack-application.herokuapp.com/
+https://blackjack-application.herokuapp.com/
 # Dependencies Explained
     <dependency>
         <groupId>com.h2database</groupId>
